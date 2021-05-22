@@ -31,7 +31,7 @@ public class LoadActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(LoadActivity.this,UserActivity.class);
+                Intent intent = new Intent(LoadActivity.this,MainMenuActivity.class);
                 startActivity(intent);
                 finish();
             }

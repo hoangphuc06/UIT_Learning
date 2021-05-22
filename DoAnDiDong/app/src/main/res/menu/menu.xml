@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.hihifragment.MainActivity">
+    <item  android:title="Trang Chủ" android:id="@+id/trangchu"  android:icon="@drawable/house"/>
+    <item android:title="Tài Liệu" android:id="@+id/tailieu" android:icon="@drawable/document"/>
+    <item android:title="Trắc Nghiệm" android:id="@+id/tracnghiem" android:icon="@drawable/elearning"/>
+    <item android:title="Tài Khoản" android:id="@+id/taikhoan" android:icon="@drawable/boy"/>
+
+</menu>
