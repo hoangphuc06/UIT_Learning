@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820725524919",
+    "project_id": "uit-learning-a46d2",
+    "storage_bucket": "uit-learning-a46d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820725524919:android:0361fa5023b294488ea032",
+        "android_client_info": {
+          "package_name": "com.example.uit_learning"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820725524919-lsd8gccoe7l9icc4oje7ebkkonrth7g4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlOpiFX2VQ6x-XoN1mptgK8FcQY1J5VI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820725524919-lsd8gccoe7l9icc4oje7ebkkonrth7g4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
