@@ -119,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             else
                             {
-
+                                Toast.makeText(RegisterActivity.this, "Lỗi",Toast.LENGTH_LONG).show();
                             }
                         }
                     });
