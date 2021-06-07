@@ -12,6 +12,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+
 public class MainActivity extends AppCompatActivity {
 
     private static int SPLASH_SCREEEN = 4000;
@@ -29,6 +32,13 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         //kết thúc
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+        {
+            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+            finish();
+            return;
+        }
 
         topAnim = AnimationUtils.loadAnimation(this,R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);

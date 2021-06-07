@@ -5,19 +5,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
@@ -31,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     TextInputLayout textEmail, textPassword;
 
     FirebaseAuth firebaseAuth;
+
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
 
         textEmail = findViewById(R.id.textEmailDN);
         textPassword = findViewById(R.id.textPasswordDN);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Logging in...");
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -79,27 +86,33 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            progressDialog.show();
+
             firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful())
                     {
+                        progressDialog.dismiss();
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                        if (user.isEmailVerified())
-                        {
-                            Intent intent  =new Intent(LoginActivity.this,LoadActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                        else
-                        {
-                            user.sendEmailVerification();
-                            Toast.makeText(LoginActivity.this,"Kiểm tra mail để xác thực cho lần đầu đăng nhập",Toast.LENGTH_LONG).show();
-                        }
+//                        if (user.isEmailVerified())
+//                        {
+//                            Intent intent  =new Intent(LoginActivity.this,LoadActivity.class);
+//                            startActivity(intent);
+//                            finish();
+//                        }
+//                        else
+//                        {
+//                            user.sendEmailVerification();
+//                            Toast.makeText(LoginActivity.this,"Kiểm tra mail để xác thực cho lần đầu đăng nhập",Toast.LENGTH_LONG).show();
+//                        }
+                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                        finish();
                     }
                     else
                     {
+                        progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this,"Tài khoản hoặc mật khẩu không chính xác!",Toast.LENGTH_LONG).show();
                     }
                 }
@@ -109,31 +122,53 @@ public class LoginActivity extends AppCompatActivity {
         btnForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText resetMail = new EditText(v.getContext());
-                final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
-                passwordResetDialog.setTitle("Đặt lại mật khẩu");
-                passwordResetDialog.setMessage("Nhập email bạn đã đăng kí");
-                passwordResetDialog.setView(resetMail);
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Reset password");
 
-                passwordResetDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                LinearLayout linearLayout = new LinearLayout(LoginActivity.this);
+
+                EditText emailEt = new EditText(LoginActivity.this);
+                emailEt.setHint("Email");
+                emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                emailEt.setMinEms(16);
+
+                linearLayout.addView(emailEt);
+                linearLayout.setPadding(10,10,10,10);
+
+                builder.setView(linearLayout);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String mail = resetMail.getText().toString();
-                        firebaseAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        String email = emailEt.getText().toString().trim();
+
+                        progressDialog.setMessage("Sending mail...");
+                        progressDialog.show();
+
+                        firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(LoginActivity.this,"Link đặt lại đã được gửi vào mail của bạn",Toast.LENGTH_SHORT).show();
+                            public void onComplete(@NonNull Task<Void> task) {
+                                progressDialog.dismiss();
+                                if (task.isSuccessful())
+                                {
+                                    Toast.makeText(LoginActivity.this,"Email sent",Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                {
+                                    Toast.makeText(LoginActivity.this,"Fail..",Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(LoginActivity.this,"Lỗi " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 });
 
-                passwordResetDialog.create().show();
+                builder.create().show();
             }
         });
 

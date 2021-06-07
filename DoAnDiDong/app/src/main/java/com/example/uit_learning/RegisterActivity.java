@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,14 +17,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import model.User;
+import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
     Button btnLoginActivity, btnRegister;
-
+    ProgressDialog progressDialog;
     TextInputLayout textEmail, textFullName, textPassword, textConPassword;
 
     FirebaseAuth firebaseAuth;
@@ -45,6 +48,9 @@ public class RegisterActivity extends AppCompatActivity {
         textFullName = findViewById(R.id.textFullNameDK);
         textPassword = findViewById(R.id.textPasswordDK);
         textConPassword = findViewById(R.id.textConPasswordDK);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Registering User");
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -91,31 +97,31 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            progressDialog.show();
+
             firebaseAuth.createUserWithEmailAndPassword(email,password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful())
                             {
-                                User user = new User(fullname,email);
-                                FirebaseDatabase.getInstance().getReference("users")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful())
-                                        {
-                                            //Toast.makeText(RegisterActivity.this,"Đăng kí thành công",Toast.LENGTH_LONG).show();
-                                            Intent intent = new Intent(RegisterActivity.this,SuccessRegisterActivity.class);
-                                            startActivity(intent);
-                                            finish();
-                                        }
-                                        else
-                                        {
-                                            Toast.makeText(RegisterActivity.this,"Đăng kí thất bại",Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
+                                progressDialog.dismiss();
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                                HashMap<Object,String> hashMap = new HashMap<>();
+                                hashMap.put("email",email);
+                                hashMap.put("name",fullname);
+                                hashMap.put("image","");
+                                hashMap.put("cover","");
+                                hashMap.put("uid",user.getUid());
+
+                                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                DatabaseReference reference = firebaseDatabase.getReference("Users");
+                                reference.child(user.getUid()).setValue(hashMap);
+
+                                Toast.makeText(RegisterActivity.this,"Register Successful",Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
+                                finish();;
                             }
                             else
                             {
