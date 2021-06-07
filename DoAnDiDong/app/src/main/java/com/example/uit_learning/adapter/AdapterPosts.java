@@ -113,10 +113,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
         try {
             Picasso.get().load(uDp).placeholder(R.drawable.ic_image_default).into(holder.uPictureIv);
         }
-        catch (Exception e)
-        {
-
-        }
+        catch (Exception e) { }
 
         if (pImage.equals("noImage"))
         {
