@@ -545,4 +545,5 @@ public class AddPostActivity extends AppCompatActivity {
         onBackPressed();
         return super.onSupportNavigateUp();
     }
+
 }

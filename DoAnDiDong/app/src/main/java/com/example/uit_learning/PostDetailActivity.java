@@ -550,4 +550,6 @@ public class PostDetailActivity extends AppCompatActivity {
         onBackPressed();
         return super.onSupportNavigateUp();
     }
+
+    
 }
