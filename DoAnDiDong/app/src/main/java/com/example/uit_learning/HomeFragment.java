@@ -2,22 +2,113 @@ package com.example.uit_learning;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.uit_learning.adapter.CourseRecyclerAdapter;
+import com.example.uit_learning.model.Course;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.uit_learning.utils.*;
+
 public class HomeFragment extends Fragment {
+
+    private static final FirebaseDatabase root = FirebaseDatabase.getInstance();
+
+    private List<Course> courses_101;
+    private DatabaseReference reference_101;
+
+    private List<Course> courses_foundation;
+    private DatabaseReference reference_foundation;
+
+    // RecyclerView manager
+    RecyclerView recyclerView_101;
+    RecyclerView recyclerView_foundation;
+    RecyclerView.Adapter adapter;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        reference_101 = root.getReference("Document/Outline");
+        courses_101 = new ArrayList<>();
+
+        reference_foundation = root.getReference("Document/Foundation");
+        courses_foundation = new ArrayList<>();
+
+        importDataCourses101();
+        importDataCourseFoundation();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        // 101
+        recyclerView_101 = view.findViewById(R.id.recycler_outline_courses);
+        recyclerView_101.setLayoutManager(new LinearLayoutManager(view.getContext(),
+                RecyclerView.HORIZONTAL, false));
+        recyclerView_101.addItemDecoration(new SpacingItemDecorator(40));
+        // Foundation
+        recyclerView_foundation = view.findViewById(R.id.recycler_foundation_courses);
+        recyclerView_foundation.setLayoutManager(new LinearLayoutManager(view.getContext(),
+                RecyclerView.HORIZONTAL, false));
+        recyclerView_foundation.addItemDecoration(new SpacingItemDecorator(40));
+
+        return view;
+    }
+
+    private void importDataCourses101() {
+        reference_101.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                courses_101.clear();
+                for(DataSnapshot snap : snapshot.getChildren()) {
+                    courses_101.add(snap.getValue(Course.class));
+                }
+                adapter = new CourseRecyclerAdapter(courses_101);
+                recyclerView_101.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void importDataCourseFoundation() {
+        reference_foundation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                courses_foundation.clear();
+                for(DataSnapshot snap : snapshot.getChildren()) {
+                    courses_foundation.add(snap.getValue(Course.class));
+                }
+                adapter = new CourseRecyclerAdapter(courses_foundation);
+                recyclerView_foundation.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 }
