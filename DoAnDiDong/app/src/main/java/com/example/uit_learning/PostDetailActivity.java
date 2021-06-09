@@ -116,22 +116,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
         loadComments();
 
-        // hien email cua tac gia
-        DatabaseReference dtf = FirebaseDatabase.getInstance().getReference("Posts").child(postId);
-        dtf.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Post p = snapshot.getValue(Post.class);
-                actionBar.setSubtitle("Writed by: " + p.getuEmail());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,9 +141,27 @@ public class PostDetailActivity extends AppCompatActivity {
         pLikesTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PostDetailActivity.this, PostLikedByActivity.class);
-                intent.putExtra("postId",postId);
-                startActivity(intent);
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child(postId).exists())
+                        {
+                            Intent intent = new Intent(PostDetailActivity.this, PostLikedByActivity.class);
+                            intent.putExtra("postId",postId);
+                            startActivity(intent);
+                        }
+                        else
+                        {
+                            Toast.makeText(PostDetailActivity.this,"Post not exist",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
     }
@@ -230,34 +232,52 @@ public class PostDetailActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showMoreOptions() {
-        PopupMenu popupMenu = new PopupMenu(PostDetailActivity.this,moreBtn, Gravity.END);
-
-        if (hisUid.equals(myUid))
-        {
-            popupMenu.getMenu().add(Menu.NONE,0,0,"Delete");
-            popupMenu.getMenu().add(Menu.NONE,1,0,"Edit");
-        }
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                if (id == 0)
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(postId).exists())
                 {
-                    beginDelete();
+                    PopupMenu popupMenu = new PopupMenu(PostDetailActivity.this,moreBtn, Gravity.END);
+
+                    if (hisUid.equals(myUid))
+                    {
+                        popupMenu.getMenu().add(Menu.NONE,0,0,"Delete");
+                        popupMenu.getMenu().add(Menu.NONE,1,0,"Edit");
+                    }
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            int id = item.getItemId();
+                            if (id == 0)
+                            {
+                                beginDelete();
+                            }
+                            else if (id == 1)
+                            {
+                                Intent intent = new Intent(PostDetailActivity.this, AddPostActivity.class);
+                                intent.putExtra("key","editPost");
+                                intent.putExtra("editPostId",postId);
+                                startActivity(intent);
+                            }
+                            return false;
+                        }
+                    });
+
+                    popupMenu.show();
                 }
-                else if (id == 1)
+                else
                 {
-                    Intent intent = new Intent(PostDetailActivity.this, AddPostActivity.class);
-                    intent.putExtra("key","editPost");
-                    intent.putExtra("editPostId",postId);
-                    startActivity(intent);
+                    Toast.makeText(PostDetailActivity.this,"Post not exist",Toast.LENGTH_SHORT).show();
                 }
-                return false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-
-        popupMenu.show();
     }
 
     private void beginDelete() {
@@ -274,6 +294,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private void deleteWithImage() {
         final ProgressDialog progressDialog = new ProgressDialog(PostDetailActivity.this);
         progressDialog.setMessage("Deleting...");
+        progressDialog.show();
 
         StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
         picRef.delete()
@@ -311,6 +332,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private void deleteWithoutImage() {
         final ProgressDialog progressDialog = new ProgressDialog(PostDetailActivity.this);
         progressDialog.setMessage("Deleting...");
+        progressDialog.show();
 
         Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(postId);
         fquery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -354,28 +376,45 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void likePost() {
-
-        mProcessLike = true;
-        final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
-        final DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
-        likesRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (mProcessLike) {
-                    if (snapshot.child(postId).hasChild(myUid)) {
-                        postsRef.child(postId).child("pLikes").setValue("" + (Integer.parseInt(pLikes)-1));
-                        likesRef.child(postId).child(myUid).removeValue();
-                        mProcessLike = false;
+                if (snapshot.child(postId).exists())
+                {
+                    mProcessLike = true;
+                    final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+                    final DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+                    likesRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (mProcessLike) {
+                                if (snapshot.child(postId).hasChild(myUid)) {
+                                    postsRef.child(postId).child("pLikes").setValue("" + (Integer.parseInt(pLikes)-1));
+                                    likesRef.child(postId).child(myUid).removeValue();
+                                    mProcessLike = false;
 
-                        likeBtn.setImageResource(R.drawable.ic_like_24);
-                    }
-                    else {
-                        postsRef.child(postId).child("pLikes").setValue("" + (Integer.parseInt(pLikes)+1));
-                        likesRef.child(postId).child(myUid).setValue("Liked");
-                        mProcessLike = false;
+                                    likeBtn.setImageResource(R.drawable.ic_like_24);
+                                }
+                                else {
+                                    postsRef.child(postId).child("pLikes").setValue("" + (Integer.parseInt(pLikes)+1));
+                                    likesRef.child(postId).child(myUid).setValue("Liked");
+                                    mProcessLike = false;
 
-                        addToHisNotifications(""+hisUid,""+postId,"Liked your post");
-                    }
+                                    addToHisNotifications(""+hisUid,""+postId,"Liked your post");
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+                else
+                {
+                    Toast.makeText(PostDetailActivity.this,"Post not exist",Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -384,53 +423,73 @@ public class PostDetailActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void postComment() {
-        progressDialog = new ProgressDialog(PostDetailActivity.this);
-        progressDialog.setMessage("Adding comment...");
-        progressDialog.show();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(postId).exists())
+                {
+                    progressDialog = new ProgressDialog(PostDetailActivity.this);
+                    progressDialog.setMessage("Adding comment...");
+                    progressDialog.show();
 
-        String comment = commentEt.getText().toString().trim();
+                    String comment = commentEt.getText().toString().trim();
 
-        if (TextUtils.isEmpty(comment))
-        {
-            Toast.makeText(PostDetailActivity.this,"Commment is empty...",Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String timeStamp = String.valueOf(System.currentTimeMillis());
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId).child("Comments");
-
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("cId",timeStamp);
-        hashMap.put("comment",comment);
-        hashMap.put("timestamp",timeStamp);
-        hashMap.put("uid",myUid);
-        hashMap.put("uEmail",myName);
-        hashMap.put("uDp",myDp);
-        hashMap.put("uName",myName);
-
-        ref.child(timeStamp).setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PostDetailActivity.this,"Comment Added...",Toast.LENGTH_SHORT).show();
-                        commentEt.setText("");
-                        updateCommentCount();
-
-                        addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
+                    if (TextUtils.isEmpty(comment))
+                    {
+                        Toast.makeText(PostDetailActivity.this,"Commment is empty...",Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PostDetailActivity.this,"" + e.getMessage(),Toast.LENGTH_SHORT).show();
-                    }
-                });
+
+                    String timeStamp = String.valueOf(System.currentTimeMillis());
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId).child("Comments");
+
+                    HashMap<String,Object> hashMap = new HashMap<>();
+                    hashMap.put("cId",timeStamp);
+                    hashMap.put("comment",comment);
+                    hashMap.put("timestamp",timeStamp);
+                    hashMap.put("uid",myUid);
+                    hashMap.put("uEmail",myName);
+                    hashMap.put("uDp",myDp);
+                    hashMap.put("uName",myName);
+
+                    ref.child(timeStamp).setValue(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(PostDetailActivity.this,"Comment Added...",Toast.LENGTH_SHORT).show();
+                                    commentEt.setText("");
+                                    updateCommentCount();
+
+                                    addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(PostDetailActivity.this,"" + e.getMessage(),Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                else
+                {
+                    Toast.makeText(PostDetailActivity.this,"Post not exist",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void updateCommentCount() {
@@ -468,7 +527,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     }
                     catch (Exception e)
                     {
-                        Picasso.get().load(R.drawable.ic_image_default).into(cAvatarIv);
+                        //Picasso.get().load(R.drawable.ic_image_default).into(cAvatarIv);
                     }
                 }
             }
@@ -533,7 +592,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     }
                     catch (Exception e)
                     {
-                        Picasso.get().load(R.drawable.ic_image_default).into(uPictureIv);
+                        //Picasso.get().load(R.drawable.ic_image_default).into(uPictureIv);
                     }
                 }
             }
@@ -551,5 +610,9 @@ public class PostDetailActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
-    
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+    }
 }

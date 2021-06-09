@@ -143,25 +143,43 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int pLikes = Integer.parseInt(postList.get(position).getpLikes());
-                mProcessLike = true;
-                String postIde = postList.get(position).getpId();
-                likesRef.addValueEventListener(new ValueEventListener() {
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (mProcessLike) {
-                            if (snapshot.child(postIde).hasChild(myUid)) {
-                                postsRef.child(postIde).child("pLikes").setValue("" + (pLikes-1));
-                                likesRef.child(postIde).child(myUid).removeValue();
-                                mProcessLike = false;
-                            }
-                            else {
-                                postsRef.child(postIde).child("pLikes").setValue("" + (pLikes+1));
-                                likesRef.child(postIde).child(myUid).setValue("Liked");
-                                mProcessLike = false;
+                        if (snapshot.child(pId).exists())
+                        {
+                            int pLikes = Integer.parseInt(postList.get(position).getpLikes());
+                            mProcessLike = true;
+                            String postIde = postList.get(position).getpId();
+                            likesRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (mProcessLike) {
+                                        if (snapshot.child(postIde).hasChild(myUid)) {
+                                            postsRef.child(postIde).child("pLikes").setValue("" + (pLikes-1));
+                                            likesRef.child(postIde).child(myUid).removeValue();
+                                            mProcessLike = false;
+                                        }
+                                        else {
+                                            postsRef.child(postIde).child("pLikes").setValue("" + (pLikes+1));
+                                            likesRef.child(postIde).child(myUid).setValue("Liked");
+                                            mProcessLike = false;
 
-                                addToHisNotifications(""+uid,""+pId,"Liked your post");
-                            }
+                                            addToHisNotifications(""+uid,""+pId,"Liked your post");
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                        else
+                        {
+                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -176,18 +194,54 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
         holder.commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, PostDetailActivity.class);
-                intent.putExtra("postId",pId);
-                context.startActivity(intent);
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child(pId).exists())
+                        {
+                            Intent intent = new Intent(context, PostDetailActivity.class);
+                            intent.putExtra("postId",pId);
+                            context.startActivity(intent);
+                        }
+                        else
+                        {
+                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 
         holder.pLikesTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, PostLikedByActivity.class);
-                intent.putExtra("postId",pId);
-                context.startActivity(intent);
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child(pId).exists())
+                        {
+                            Intent intent = new Intent(context, PostLikedByActivity.class);
+                            intent.putExtra("postId",pId);
+                            context.startActivity(intent);
+                        }
+                        else
+                        {
+                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
     }
@@ -248,50 +302,68 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showMoreOptions(ImageButton moreBtn, String uid, String myUid, String pId, String pImage, String pTitle, String pDescription) {
-        PopupMenu popupMenu = new PopupMenu(context,moreBtn, Gravity.END);
-
-        if (uid.equals(myUid))
-        {
-            popupMenu.getMenu().add(Menu.NONE,0,0,"Delete");
-            popupMenu.getMenu().add(Menu.NONE,1,0,"Edit");
-        }
-
-        popupMenu.getMenu().add(Menu.NONE,2,0,"View Detail");
-        popupMenu.getMenu().add(Menu.NONE,3,0,"Copy");
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                if (id == 0)
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(pId).exists())
                 {
-                    beginDelete(pId,pImage);
+                    PopupMenu popupMenu = new PopupMenu(context,moreBtn, Gravity.END);
+
+                    if (uid.equals(myUid))
+                    {
+                        popupMenu.getMenu().add(Menu.NONE,0,0,"Delete");
+                        popupMenu.getMenu().add(Menu.NONE,1,0,"Edit");
+                    }
+
+                    popupMenu.getMenu().add(Menu.NONE,2,0,"View Detail");
+                    popupMenu.getMenu().add(Menu.NONE,3,0,"Copy");
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            int id = item.getItemId();
+                            if (id == 0)
+                            {
+                                beginDelete(pId,pImage);
+                            }
+                            else if (id == 1)
+                            {
+                                Intent intent = new Intent(context, AddPostActivity.class);
+                                intent.putExtra("key","editPost");
+                                intent.putExtra("editPostId",pId);
+                                context.startActivity(intent);
+                            }
+                            else if (id == 2)
+                            {
+                                Intent intent = new Intent(context, PostDetailActivity.class);
+                                intent.putExtra("postId",pId);
+                                context.startActivity(intent);
+                            }
+                            else if (id == 3)
+                            {
+                                String copyText= pTitle + "\n" + pDescription;
+                                myClip = ClipData.newPlainText("text", copyText);
+                                myClipboard.setPrimaryClip(myClip);
+                                Toast.makeText(context,"Coppied..",Toast.LENGTH_SHORT).show();
+                            }
+                            return false;
+                        }
+                    });
+
+                    popupMenu.show();
                 }
-                else if (id == 1)
+                else
                 {
-                    Intent intent = new Intent(context, AddPostActivity.class);
-                    intent.putExtra("key","editPost");
-                    intent.putExtra("editPostId",pId);
-                    context.startActivity(intent);
+                    Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
                 }
-                else if (id == 2)
-                {
-                    Intent intent = new Intent(context, PostDetailActivity.class);
-                    intent.putExtra("postId",pId);
-                    context.startActivity(intent);
-                }
-                else if (id == 3)
-                {
-                    String copyText= pTitle + "\n" + pDescription;
-                    myClip = ClipData.newPlainText("text", copyText);
-                    myClipboard.setPrimaryClip(myClip);
-                    Toast.makeText(context,"Coppied..",Toast.LENGTH_SHORT).show();
-                }
-                return false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-
-        popupMenu.show();
     }
 
     private void beginDelete(String pId, String pImage) {
@@ -308,6 +380,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
     private void deleteWithImage(String pId, String pImage) {
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Deleting...");
+        progressDialog.show();
 
         StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
         picRef.delete()
@@ -346,6 +419,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Deleting...");
+        progressDialog.show();
 
         Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
         fquery.addListenerForSingleValueEvent(new ValueEventListener() {

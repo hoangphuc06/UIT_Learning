@@ -83,7 +83,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
         }
         catch (Exception e)
         {
-            Picasso.get().load(R.drawable.ic_image_default).into(holder.avatarIv);
+            //Picasso.get().load(R.drawable.ic_image_default).into(holder.avatarIv);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
