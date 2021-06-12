@@ -7,7 +7,7 @@
     android:layout_height="210dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="5dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="@color/main"
     android:foreground="?selectableItemBackground"
     android:clickable="true">
 
@@ -19,7 +19,8 @@
         <ImageView
             android:id="@+id/image_card"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="150dp"
+            android:layout_margin="10dp"
             android:scaleType="centerCrop" />
 
         <TextView
@@ -27,8 +28,9 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:gravity="center"
+            android:textColor="@color/white"
             android:textAlignment="center"
-            android:textSize="22sp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 

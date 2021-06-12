@@ -1,5 +1,6 @@
 package com.example.uit_learning;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -18,7 +19,9 @@ public class ViewPDFActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pdfactivity);
-
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         pdfview=(WebView)findViewById(R.id.viewpdf);
         pdfview.getSettings().setJavaScriptEnabled(true);
@@ -27,6 +30,8 @@ public class ViewPDFActivity extends AppCompatActivity {
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
+
+        actionBar.setTitle(filename);
 
         final ProgressDialog pd=new ProgressDialog(this);
         pd.setTitle(filename);
@@ -66,5 +71,11 @@ public class ViewPDFActivity extends AppCompatActivity {
         public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
             return false;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

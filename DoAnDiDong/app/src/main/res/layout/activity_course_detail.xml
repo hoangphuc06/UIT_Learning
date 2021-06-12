@@ -8,14 +8,6 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/titleCourseTv"
-        android:textSize="16sp"
-        android:text="Title Course"
-        android:textColor="@color/main"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"

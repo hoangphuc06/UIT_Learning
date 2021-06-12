@@ -52,7 +52,7 @@
                     android:layout_gravity="left"
                     android:text="Đại cương >"
                     android:elevation="5dp"
-                    android:textSize="28sp" />
+                    android:textSize="24sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_outline_courses"
@@ -67,7 +67,7 @@
                     android:elevation="5dp"
                     android:layout_marginTop="16dp"
                     android:text="Cơ sở nhóm ngành >"
-                    android:textSize="28sp" />
+                    android:textSize="24sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_foundation_courses"
