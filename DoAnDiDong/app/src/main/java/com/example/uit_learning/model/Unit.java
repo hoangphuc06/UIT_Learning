@@ -1,14 +1,14 @@
 package com.example.uit_learning.model;
 
-public class PDF {
+public class Unit {
     String filename;
     String fileurl;
 
-    public PDF() {
+    public Unit() {
 
     }
 
-    public PDF(String filename, String fileurl) {
+    public Unit(String filename, String fileurl) {
         this.filename = filename;
         this.fileurl = fileurl;
     }

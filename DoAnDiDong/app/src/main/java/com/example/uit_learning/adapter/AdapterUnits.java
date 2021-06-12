@@ -12,19 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uit_learning.R;
 import com.example.uit_learning.ViewPDFActivity;
-import com.example.uit_learning.model.PDF;
+import com.example.uit_learning.model.Unit;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
-public class AdapterUnits extends FirebaseRecyclerAdapter<PDF,AdapterUnits.myviewholder>{
+public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myviewholder>{
 
 
-    public AdapterUnits(@NonNull FirebaseRecyclerOptions<PDF> options) {
+    public AdapterUnits(@NonNull FirebaseRecyclerOptions<Unit> options) {
         super(options);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull  AdapterUnits.myviewholder holder, int position, @NonNull  PDF model) {
+    protected void onBindViewHolder(@NonNull  AdapterUnits.myviewholder holder, int position, @NonNull Unit model) {
         holder.header.setText(model.getFilename());
         holder.imgopen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,7 +32,6 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<PDF,AdapterUnits.myvie
                 Intent intent=new Intent(holder.imgopen.getContext(), ViewPDFActivity.class);
                 intent.putExtra("filename",model.getFilename());
                 intent.putExtra("fileurl",model.getFileurl());
-
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 holder.imgopen.getContext().startActivity(intent);
             }

@@ -1,5 +1,6 @@
 package com.example.uit_learning;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,8 +11,7 @@ import android.widget.TextView;
 
 
 import com.example.uit_learning.adapter.AdapterUnits;
-import com.example.uit_learning.model.Course;
-import com.example.uit_learning.model.PDF;
+import com.example.uit_learning.model.Unit;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -27,20 +27,22 @@ public class CourseDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_detail);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
 
         titltCourse = intent.getStringExtra("title");
         typeCourse = intent.getStringExtra("type");
         idCourse = intent.getStringExtra("id");
 
-        titleCourseTv = findViewById(R.id.titleCourseTv);
-        titleCourseTv.setText(intent.getStringExtra("title"));
-
+        actionBar.setTitle(titltCourse);
 
         recview = findViewById(R.id.recview);
         recview.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseRecyclerOptions<PDF> options = new FirebaseRecyclerOptions.Builder<PDF>().setQuery(FirebaseDatabase.getInstance().getReference("Courses").child(typeCourse).child(idCourse).child("Documents"), PDF.class).build();
+        FirebaseRecyclerOptions<Unit> options = new FirebaseRecyclerOptions.Builder<Unit>().setQuery(FirebaseDatabase.getInstance().getReference("Courses").child(typeCourse).child(idCourse).child("Documents"), Unit.class).build();
 
         adapter = new AdapterUnits(options);
         recview.setAdapter(adapter);
@@ -57,5 +59,11 @@ public class CourseDetailActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }
