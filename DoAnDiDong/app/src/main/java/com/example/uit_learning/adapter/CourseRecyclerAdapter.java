@@ -51,6 +51,8 @@ public class CourseRecyclerAdapter extends RecyclerView.Adapter<CourseRecyclerAd
             public void onClick(View v) {
                 Intent intent = new Intent(holder.itemImage.getContext(), CourseDetailActivity.class);
                 intent.putExtra("title",courseList.get(position).getTitle());
+                intent.putExtra("type",courseList.get(position).getType());
+                intent.putExtra("id", courseList.get(position).getId());
                 holder.itemImage.getContext().startActivity(intent);
             }
         });
