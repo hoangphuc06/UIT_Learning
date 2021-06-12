@@ -47,10 +47,10 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        reference_101 = root.getReference("Document/Outline");
+        reference_101 = root.getReference("Courses/Outline");
         courses_101 = new ArrayList<>();
 
-        reference_foundation = root.getReference("Document/Foundation");
+        reference_foundation = root.getReference("Courses/Foundation");
         courses_foundation = new ArrayList<>();
 
         importDataCourses101();
