@@ -39,6 +39,7 @@ public class ForumFragment extends Fragment {
     List<Post> postList;
     AdapterPosts adapterPosts;
 
+
     public ForumFragment() {
         // Required empty public constructor
     }

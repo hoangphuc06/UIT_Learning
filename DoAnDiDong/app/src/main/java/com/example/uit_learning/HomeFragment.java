@@ -1,5 +1,6 @@
 package com.example.uit_learning;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.uit_learning.adapter.AdapterSlider;
 import com.example.uit_learning.adapter.CourseRecyclerAdapter;
 import com.example.uit_learning.model.Course;
+import com.example.uit_learning.model.Slider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.uit_learning.utils.*;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 public class HomeFragment extends Fragment {
 
@@ -38,6 +44,10 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView_101;
     RecyclerView recyclerView_foundation;
     RecyclerView.Adapter adapter;
+
+    SliderView sliderView;
+    List<Slider> sliderList;
+    AdapterSlider adapterSlider;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -55,6 +65,8 @@ public class HomeFragment extends Fragment {
 
         importDataCourses101();
         importDataCourseFoundation();
+
+
     }
 
     @Override
@@ -72,6 +84,44 @@ public class HomeFragment extends Fragment {
         recyclerView_foundation.setLayoutManager(new LinearLayoutManager(view.getContext(),
                 RecyclerView.HORIZONTAL, false));
         recyclerView_foundation.addItemDecoration(new SpacingItemDecorator(40));
+
+        // Load Slider
+        sliderView = view.findViewById(R.id.imageSlider);
+        sliderList = new ArrayList<>();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Slider");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                sliderList.clear();
+                for (DataSnapshot ds: snapshot.getChildren())
+                {
+                    Slider slider = ds.getValue(Slider.class);
+
+                    sliderList.add(slider);
+
+                    adapterSlider = new AdapterSlider(sliderList);
+
+                    sliderView.setSliderAdapter(adapterSlider);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        AdapterSlider adapterSlider = new AdapterSlider(sliderList);
+
+        sliderView.setSliderAdapter(adapterSlider);
+        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+        sliderView.setIndicatorSelectedColor(Color.WHITE);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+        sliderView.startAutoCycle();
 
         return view;
     }

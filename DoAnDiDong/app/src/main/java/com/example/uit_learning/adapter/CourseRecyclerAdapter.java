@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.uit_learning.model.Course;
+import com.squareup.picasso.Picasso;
 
 public class CourseRecyclerAdapter extends RecyclerView.Adapter<CourseRecyclerAdapter.ViewHolder> {
 
@@ -45,7 +46,15 @@ public class CourseRecyclerAdapter extends RecyclerView.Adapter<CourseRecyclerAd
         }
 
         holder.itemTitle.setText(courseList.get(position).getTitle());
-        holder.itemImage.setImageResource(R.drawable.background_avt_img);
+
+        try {
+            Picasso.get().load(courseList.get(position).getImage()).into(holder.itemImage);
+        }
+        catch (Exception e)
+        {
+
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
