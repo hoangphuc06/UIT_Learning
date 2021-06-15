@@ -8,75 +8,78 @@
     android:orientation="vertical"
     tools:context=".HomeFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        android:weightSum="1">
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
 
-        <TextView
-            android:id="@+id/txtPer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Tài Liệu"
-            android:textColor="@color/black"
-            android:textSize="30dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
-
-
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="6dp"
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.smarteist.autoimageslider.SliderView
+                    android:id="@+id/imageSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    app:sliderAnimationDuration="600"
+                    app:sliderAutoCycleDirection="back_and_forth"
+                    app:sliderAutoCycleEnabled="true"
+                    app:sliderIndicatorAnimationDuration="600"
+                    app:sliderIndicatorGravity="center_horizontal|bottom"
+                    app:sliderIndicatorMargin="15dp"
+                    app:sliderIndicatorOrientation="horizontal"
+                    app:sliderIndicatorPadding="3dp"
+                    app:sliderIndicatorRadius="2dp"
+                    app:sliderIndicatorSelectedColor="#5A5A5A"
+                    app:sliderIndicatorUnselectedColor="#FFF"
+                    app:sliderScrollTimeInSec="1"
+                    app:sliderStartAutoCycle="true" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="45dp"
+                android:layout_gravity="left"
+                android:layout_marginBottom="16dp"
+                android:text="Đại cương >"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/background_textview"
+                android:elevation="2dp"
+                android:textSize="20sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_outline_courses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="170dp"
+                android:layout_height="45dp"
+                android:layout_gravity="left"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Cơ sở ngành >"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/background_textview"
+                android:elevation="2dp"
+                android:textSize="20sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_foundation_courses"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:text="Đại cương >"
-                    android:elevation="5dp"
-                    android:textSize="24sp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_outline_courses"
-                    android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:elevation="5dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Cơ sở nhóm ngành >"
-                    android:textSize="24sp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_foundation_courses"
-                    android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-        </ScrollView>
-
-    </LinearLayout>
+                android:layout_marginBottom="16dp"/>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
