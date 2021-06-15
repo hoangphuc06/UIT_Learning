@@ -26,14 +26,14 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
     @Override
     protected void onBindViewHolder(@NonNull  AdapterUnits.myviewholder holder, int position, @NonNull Unit model) {
         holder.header.setText(model.getFilename());
-        holder.imgopen.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(holder.imgopen.getContext(), ViewPDFActivity.class);
+                Intent intent=new Intent(holder.itemView.getContext(), ViewPDFActivity.class);
                 intent.putExtra("filename",model.getFilename());
                 intent.putExtra("fileurl",model.getFileurl());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                holder.imgopen.getContext().startActivity(intent);
+                holder.itemView.getContext().startActivity(intent);
             }
         });
     }
@@ -46,12 +46,12 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
 
     public class myviewholder extends RecyclerView.ViewHolder
     {
-        ImageView imgopen;
         TextView header;
+        View itemView;
 
         public myviewholder(@NonNull View itemView) {
             super(itemView);
-            imgopen = itemView.findViewById(R.id.btnopen);
+            this.itemView = itemView;
             header = itemView.findViewById(R.id.header);
         }
     }
