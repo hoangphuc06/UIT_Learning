@@ -30,6 +30,7 @@ public class ViewPDFActivity extends AppCompatActivity {
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
+        String id=getIntent().getStringExtra("id");
 
         actionBar.setTitle(filename);
 
