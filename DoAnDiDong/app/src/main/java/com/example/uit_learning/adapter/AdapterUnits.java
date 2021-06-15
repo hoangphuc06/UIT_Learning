@@ -32,6 +32,7 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
                 Intent intent=new Intent(holder.itemView.getContext(), ViewPDFActivity.class);
                 intent.putExtra("filename",model.getFilename());
                 intent.putExtra("fileurl",model.getFileurl());
+                intent.putExtra("id",model.getId());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 holder.itemView.getContext().startActivity(intent);
             }
