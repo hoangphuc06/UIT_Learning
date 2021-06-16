@@ -33,6 +33,8 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
                 intent.putExtra("filename",model.getFilename());
                 intent.putExtra("fileurl",model.getFileurl());
                 intent.putExtra("id",model.getId());
+                intent.putExtra("idUnit",model.getIdUnit());
+                intent.putExtra("typeUnit",model.getTypeUnit());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 holder.itemView.getContext().startActivity(intent);
             }
