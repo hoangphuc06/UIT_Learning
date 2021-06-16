@@ -193,6 +193,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         if(Common.list.get(Index).getIsImageQuestion()==1)
         {
+            layout_image.setVisibility(View.VISIBLE);
             ImageView img_question=(ImageView)findViewById(R.id.img_question);
             Picasso.get().load(Common.list.get(Index).getQuestionImage()).into(img_question, new Callback() {
                 @Override

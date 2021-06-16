@@ -237,4 +237,6 @@ public class ResultActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
+
 }
