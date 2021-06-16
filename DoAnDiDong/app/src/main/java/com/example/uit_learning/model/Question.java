@@ -1,7 +1,7 @@
 package com.example.uit_learning.model;
 
 public class Question {
-    private String Quetion;
+    private String ques;
     private String oA;
     private String oB;
     private String oC;
@@ -12,8 +12,8 @@ public class Question {
 
     Question(){}
 
-    public Question(String quetion, String oA, String oB, String oC, String oD, String asd, String questionImage, int isImageQuestion) {
-        Quetion = quetion;
+    public Question(String ques, String oA, String oB, String oC, String oD, String asd, String questionImage, int isImageQuestion) {
+        this.ques = ques;
         this.oA = oA;
         this.oB = oB;
         this.oC = oC;
@@ -23,12 +23,12 @@ public class Question {
         this.isImageQuestion = isImageQuestion;
     }
 
-    public String getQuetion() {
-        return Quetion;
+    public String getQues() {
+        return ques;
     }
 
-    public void setQuetion(String quetion) {
-        Quetion = quetion;
+    public void setQuetion(String question) {
+        ques = question;
     }
 
     public String getoA() {
