@@ -45,11 +45,14 @@ public class LoadQuestionActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                Common.list.clear();
+                Common.listanswer.clear();
+                Common.answerSheetList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Question question = dataSnapshot.getValue(Question.class);
                     Common.list.add(question);
                 }
+
 
                 for(int i=0;i<Common.list.size();i++)
                 {
