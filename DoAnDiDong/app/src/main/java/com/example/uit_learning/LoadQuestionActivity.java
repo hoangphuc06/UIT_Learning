@@ -46,6 +46,10 @@ public class LoadQuestionActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                Common.list.clear();
+                Common.listanswer.clear();
+                Common.answerSheetList.clear();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Question question = dataSnapshot.getValue(Question.class);
                     Common.list.add(question);
@@ -57,6 +61,9 @@ public class LoadQuestionActivity extends AppCompatActivity {
                     Common.answerSheetList.add(new CurrentQuestion(i, Common.ANSWER_TYPE.NO_ANSWER));
                 }
                 Intent intent = new Intent(LoadQuestionActivity.this, QuestionActivity.class);
+                intent.putExtra("idUnit",idUnit);
+                intent.putExtra("typeUnit",typeUnit);
+                intent.putExtra("id",id);
                 startActivity(intent);
                 finish();
 

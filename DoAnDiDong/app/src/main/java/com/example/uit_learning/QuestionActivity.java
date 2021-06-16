@@ -53,6 +53,8 @@ public class QuestionActivity extends AppCompatActivity {
 
     boolean isAnswerModeView=false;
 
+    String id, idUnit, typeUnit;
+
     Toolbar toolbar;
     @Override
     protected void onDestroy() {
@@ -64,6 +66,11 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+        Intent intent=getIntent();
+        id=intent.getStringExtra("id");
+        idUnit=getIntent().getStringExtra("idUnit");
+        typeUnit=getIntent().getStringExtra("typeUnit");
 
         if(Common.list.size()>0)
         {
@@ -193,6 +200,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         if(Common.list.get(Index).getIsImageQuestion()==1)
         {
+            layout_image.setVisibility(View.VISIBLE);
             ImageView img_question=(ImageView)findViewById(R.id.img_question);
             Picasso.get().load(Common.list.get(Index).getQuestionImage()).into(img_question, new Callback() {
                 @Override
@@ -403,6 +411,9 @@ public class QuestionActivity extends AppCompatActivity {
         }
         Common.countDownTimer.cancel();
         Intent intent=new Intent(QuestionActivity.this,ResultActivity.class);
+        intent.putExtra("idUnit",idUnit);
+        intent.putExtra("typeUnit",typeUnit);
+        intent.putExtra("id",id);
         startActivityForResult(intent,CODE_GET_RESULT);
         Common.timer=Common.TOTAL_TIME-time_play;
     }

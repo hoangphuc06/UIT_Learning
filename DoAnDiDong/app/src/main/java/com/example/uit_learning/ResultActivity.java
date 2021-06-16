@@ -32,6 +32,8 @@ public class ResultActivity extends AppCompatActivity {
     Button btn_filter_total,btn_filter_right_answer,btn_filter_wrong_answer,btn_filter_no_answer;
     RecyclerView recycler_result;
 
+    String id, idUnit, typeUnit;
+
     ResultGridAdapter adapter,filtered_adapter;
 
     BroadcastReceiver backToQuestion=new BroadcastReceiver() {
@@ -54,6 +56,11 @@ public class ResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
+        Intent intent=getIntent();
+        id=intent.getStringExtra("id");
+        idUnit=getIntent().getStringExtra("idUnit");
+        typeUnit=getIntent().getStringExtra("typeUnit");
 
         setTitle("Result");
 
