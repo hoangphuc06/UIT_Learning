@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -43,26 +47,29 @@ public class ResultGridAdapter extends RecyclerView.Adapter<ResultGridAdapter.My
 
         Drawable img;
 
-        holder.btn_question.setText(new StringBuilder("Question ").append(currentQuestionList.get(position)
+        holder.textQuestion.setText(new StringBuilder("Question ").append(currentQuestionList.get(position)
                 .getQuestionIndex()+1));
         if(currentQuestionList.get(position).getType()== Common.ANSWER_TYPE.RIGHT_ANSWER)
         {
-            holder.btn_question.setBackgroundColor(Color.GREEN);
-            img=context.getResources().getDrawable(R.drawable.ic_baseline_check_24);
-            holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
+            holder.itemView.setBackgroundColor(Color.GREEN);
+            holder.iconStatus.setImageResource(R.drawable.ic_baseline_check_24);
+            //img=context.getResources().getDrawable(R.drawable.ic_baseline_check_24);
+            //holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
         }
         else
         {
             if(currentQuestionList.get(position).getType()== Common.ANSWER_TYPE.WRONG_ANSWER)
             {
-                holder.btn_question.setBackgroundColor(Color.RED);
-                img=context.getResources().getDrawable(R.drawable.ic_baseline_clear_24);
-                holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
+                holder.itemView.setBackgroundColor(Color.RED);
+//                img=context.getResources().getDrawable(R.drawable.ic_baseline_clear_24);
+//                holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
+                holder.iconStatus.setImageResource(R.drawable.ic_baseline_clear_24);
             }
             else
             {
-                img=context.getResources().getDrawable(R.drawable.ic_baseline_error_outline_24);
-                holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
+//                img=context.getResources().getDrawable(R.drawable.ic_baseline_error_outline_24);
+//                holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
+                holder.iconStatus.setImageResource(R.drawable.ic_baseline_error_outline_24);
 
             }
         }
@@ -76,13 +83,17 @@ public class ResultGridAdapter extends RecyclerView.Adapter<ResultGridAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        Button btn_question;
+        TextView textQuestion;
+        ImageView iconStatus;
+        View itemView;
         public MyViewHolder(@NonNull View itemView) {
-
             super(itemView);
 
-            btn_question=(Button)itemView.findViewById(R.id.btn_question);
-            btn_question.setOnClickListener(new View.OnClickListener() {
+            textQuestion = itemView.findViewById(R.id.textQuestion);
+            iconStatus = itemView.findViewById(R.id.iconStatus);
+            this.itemView = itemView;
+
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     LocalBroadcastManager.getInstance(context)

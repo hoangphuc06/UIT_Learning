@@ -220,7 +220,7 @@ public class QuestionActivity extends AppCompatActivity {
             layout_image.setVisibility(View.GONE);
         }
 
-        txt_question_text.setText(Common.list.get(Index).getQuetion());
+        txt_question_text.setText(Common.list.get(Index).getQues());
 
 
         if(!Common.listanswer.get(Index).equals("null"))

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".QuestionActivity">
     <LinearLayout
         android:orientation="vertical"
@@ -11,7 +12,6 @@
         android:layout_height="wrap_content">
         <RelativeLayout
             android:id="@+id/rlt"
-            android:background="@color/teal_700"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="50dp">
@@ -33,7 +33,7 @@
                 android:layout_centerVertical="true"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
@@ -45,7 +45,7 @@
                 android:layout_centerVertical="true"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -62,7 +62,7 @@
                 android:layout_height="200dp">
                 <ImageView
                     android:id="@+id/img_question"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"></ImageView>
 
@@ -79,28 +79,34 @@
                 android:text="What do you chose ?"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></TextView>
 
             <CheckBox
+                android:layout_marginTop="5dp"
                 android:id="@+id/ckbA"
                 android:text="Answer A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
             <CheckBox
+                android:layout_marginTop="5dp"
                 android:id="@+id/ckbB"
                 android:text="Answer B"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
             <CheckBox
+                android:layout_marginTop="5dp"
                 android:id="@+id/ckbC"
                 android:text="Answer C"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
             <CheckBox
+                android:layout_marginTop="5dp"
                 android:id="@+id/ckbD"
                 android:text="Answer D"
                 android:layout_width="wrap_content"

@@ -15,6 +15,12 @@ import com.example.uit_learning.ViewPDFActivity;
 import com.example.uit_learning.model.Unit;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myviewholder>{
 
@@ -26,6 +32,24 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
     @Override
     protected void onBindViewHolder(@NonNull  AdapterUnits.myviewholder holder, int position, @NonNull Unit model) {
         holder.header.setText(model.getFilename());
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(model.getIdUnit()).child(model.getId());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                {
+                    holder.status.setText("Completed");
+                    holder.iconStatus.setImageResource(R.drawable.ic_check_completed);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,13 +73,16 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
 
     public class myviewholder extends RecyclerView.ViewHolder
     {
-        TextView header;
+        TextView header, status;
+        ImageView iconStatus;
         View itemView;
 
         public myviewholder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
             header = itemView.findViewById(R.id.header);
+            status = itemView.findViewById(R.id.status);
+            iconStatus = itemView.findViewById(R.id.iconStatus);
         }
     }
 }

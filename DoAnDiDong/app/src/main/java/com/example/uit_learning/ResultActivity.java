@@ -23,7 +23,15 @@ import android.widget.TextView;
 import com.example.uit_learning.Common.Common;
 import com.example.uit_learning.Common.SpaceDecoration;
 import com.example.uit_learning.adapter.ResultGridAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class ResultActivity extends AppCompatActivity {
@@ -99,24 +107,17 @@ public class ResultActivity extends AppCompatActivity {
         int percent = (Common.right_answer_cout * 100 / Common.list.size());
         if (percent > 80) {
             txt_result.setText("EXCELLENT");
+
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            HashMap<Object,String> hashMap = new HashMap<>();
+            hashMap.put("uid",uid);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(idUnit).child(id).child(uid);
+            reference.setValue(hashMap);
+
         } else {
-            if (percent > 70) {
-                txt_result.setText("GOOD");
-            } else {
-                if (percent > 60) {
-                    txt_result.setText("FAIR");
-                } else {
-                    if (percent > 50) {
-                        txt_result.setText("POOR");
-                    } else {
-                        if (percent > 40) {
-                            txt_result.setText("BAD");
-                        } else {
-                            txt_result.setText("FAILING");
-                        }
-                    }
-                }
-            }
+            txt_result.setText("GÀ");
         }
 
         btn_filter_total.setOnClickListener(new View.OnClickListener() {
