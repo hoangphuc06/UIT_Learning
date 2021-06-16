@@ -46,6 +46,7 @@ public class ViewPDFActivity extends AppCompatActivity {
         pdfview.getSettings().setJavaScriptEnabled(true);
         pdfview.setWebViewClient(new Callback());
         pdfview.getSettings().setBuiltInZoomControls(true);
+        pdfview.getSettings().setDisplayZoomControls(false);
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
