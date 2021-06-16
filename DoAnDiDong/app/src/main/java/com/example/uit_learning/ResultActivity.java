@@ -122,6 +122,7 @@ public class ResultActivity extends AppCompatActivity {
                 }
                 else
                 {
+
                     recycler_result.setAdapter(adapter);
                 }
             }
