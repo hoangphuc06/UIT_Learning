@@ -4,16 +4,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.net.URLEncoder;
 
 public class ViewPDFActivity extends AppCompatActivity {
 
+    FloatingActionButton btn_flt;
     WebView pdfview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,15 @@ public class ViewPDFActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        btn_flt=findViewById(R.id.flt_btn);
+        btn_flt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
+                startActivity(intent);
+            }
+        });
 
         pdfview=(WebView)findViewById(R.id.viewpdf);
         pdfview.getSettings().setJavaScriptEnabled(true);
