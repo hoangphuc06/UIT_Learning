@@ -29,13 +29,6 @@ public class ViewPDFActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         btn_flt=findViewById(R.id.flt_btn);
-        btn_flt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
-                startActivity(intent);
-            }
-        });
 
         pdfview=(WebView)findViewById(R.id.viewpdf);
         pdfview.getSettings().setJavaScriptEnabled(true);
@@ -45,6 +38,8 @@ public class ViewPDFActivity extends AppCompatActivity {
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
         String id=getIntent().getStringExtra("id");
+        String idUnit=getIntent().getStringExtra("idUnit");
+        String typeUnit=getIntent().getStringExtra("typeUnit");
 
         actionBar.setTitle(filename);
 
@@ -52,6 +47,16 @@ public class ViewPDFActivity extends AppCompatActivity {
         pd.setTitle(filename);
         pd.setMessage("Opening....!!!");
 
+        btn_flt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
+                intent.putExtra("id",id);
+                intent.putExtra("idUnit",idUnit);
+                intent.putExtra("typeUnit",typeUnit);
+                startActivity(intent);
+            }
+        });
 
         pdfview.setWebViewClient(new WebViewClient()
         {

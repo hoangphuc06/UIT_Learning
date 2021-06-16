@@ -24,19 +24,23 @@ public class LoadQuestionActivity extends AppCompatActivity {
 
 
     DatabaseReference databaseReference;
-    public static final String KEY_BACK_FROM_RESULT = "BACK_FROM_RESULT";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_load_question);
+
+        Intent intent=getIntent();
+        String id=intent.getStringExtra("id");
+        String idUnit=getIntent().getStringExtra("idUnit");
+        String typeUnit=getIntent().getStringExtra("typeUnit");
 
 
         Common.list = new ArrayList<>();
         Common.listanswer=new ArrayList<>();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Question");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id).child("Question");
+
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
