@@ -1,34 +1,54 @@
 package com.example.uit_learning.model;
 
 public class Question {
-    private String ques;
+    private String Quetion;
     private String oA;
     private String oB;
     private String oC;
     private String oD;
     private String asd;
     private String questionImage;
+    private String answer;
     private int isImageQuestion;
 
     Question(){}
 
-    public Question(String ques, String oA, String oB, String oC, String oD, String asd, String questionImage, int isImageQuestion) {
+<<<<<<< Updated upstream
+    public Question(String quetion, String oA, String oB, String oC, String oD, String asd, String questionImage, int isImageQuestion) {
+        Quetion = quetion;
+=======
+    public Question(String ques, String oA, String oB, String oC, String oD, String asd, String questionImage, String answer, int isImageQuestion) {
         this.ques = ques;
+>>>>>>> Stashed changes
         this.oA = oA;
         this.oB = oB;
         this.oC = oC;
         this.oD = oD;
         this.asd = asd;
         this.questionImage = questionImage;
+        this.answer = answer;
         this.isImageQuestion = isImageQuestion;
+    }
+
+<<<<<<< Updated upstream
+    public String getQuetion() {
+        return Quetion;
+=======
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     public String getQues() {
         return ques;
+>>>>>>> Stashed changes
     }
 
-    public void setQuetion(String question) {
-        ques = question;
+    public void setQuetion(String quetion) {
+        Quetion = quetion;
     }
 
     public String getoA() {

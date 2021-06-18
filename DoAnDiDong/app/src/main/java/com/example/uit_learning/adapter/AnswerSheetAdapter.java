@@ -40,7 +40,22 @@ public class AnswerSheetAdapter extends RecyclerView.Adapter<AnswerSheetAdapter.
         }
         else
         {
-                holder.question_item.setBackgroundResource(R.drawable.grid_question_no_answer);
+            if(currentQuestions.get(position).getType()== Common.ANSWER_TYPE.WRONG_ANSWER)
+            {
+                holder.question_item.setBackgroundResource(R.drawable.grid_question_wrong_answer);
+            }
+            else
+            {
+                if(currentQuestions.get(position).getType()== Common.ANSWER_TYPE.RIGHT_ANSWER)
+                {
+                    holder.question_item.setBackgroundResource(R.drawable.grid_question_right_answer);
+                }
+                else
+                {
+                    holder.question_item.setBackgroundResource(R.drawable.grid_question_no_answer);
+                }
+            }
+
         }
 
     }

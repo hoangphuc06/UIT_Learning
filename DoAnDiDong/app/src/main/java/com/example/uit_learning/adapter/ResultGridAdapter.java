@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uit_learning.Common.Common;
 import com.example.uit_learning.R;
+import com.example.uit_learning.ViewResultActivity;
 import com.example.uit_learning.model.CurrentQuestion;
 
 import java.util.List;
@@ -96,9 +97,10 @@ public class ResultGridAdapter extends RecyclerView.Adapter<ResultGridAdapter.My
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LocalBroadcastManager.getInstance(context)
-                            .sendBroadcast(new Intent(Common.KEY_BACK_FROM_RESULT).putExtra(Common.KEY_BACK_FROM_RESULT,
-                                    currentQuestionList.get(getAdapterPosition()).getQuestionIndex()));
+                    Intent intent=new Intent(itemView.getContext(), ViewResultActivity.class);
+                    intent.putExtra("check",true);
+                    intent.putExtra("index",currentQuestionList.get(getAdapterPosition()).getQuestionIndex());
+                    itemView.getContext().startActivity(intent);
                 }
             });
         }
