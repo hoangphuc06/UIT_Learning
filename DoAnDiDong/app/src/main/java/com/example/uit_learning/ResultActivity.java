@@ -195,20 +195,13 @@ public class ResultActivity extends AppCompatActivity {
             case R.id.menu_view_answer:
                 viewQuizAnswer();
                 break;
-            case android.R.id.home:
-                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                break;
         }
         return true;
     }
 
     private void viewQuizAnswer() {
-        Intent returnIntent=new Intent();
-        returnIntent.putExtra("action","viewquizanswer");
-        setResult(Activity.RESULT_OK,returnIntent);
-        finish();
+        Intent intent=new Intent(ResultActivity.this,ViewResultActivity.class);
+        startActivity(intent);
     }
 
     private void doQuizAgain() {
@@ -237,6 +230,5 @@ public class ResultActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
 
 }

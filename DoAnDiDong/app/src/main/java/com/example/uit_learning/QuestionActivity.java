@@ -51,7 +51,6 @@ public class QuestionActivity extends AppCompatActivity {
     RecyclerView answer_sheet_view;
     AnswerSheetAdapter answerSheetAdapter;
 
-    boolean isAnswerModeView=false;
 
     Toolbar toolbar;
     @Override
@@ -71,6 +70,10 @@ public class QuestionActivity extends AppCompatActivity {
             answer_sheet_view.setHasFixedSize(true);
             if (Common.list.size() > 5) {
                 answer_sheet_view.setLayoutManager(new GridLayoutManager(this, Common.list.size() / 2));
+            }
+            else {
+                answer_sheet_view.setLayoutManager(new GridLayoutManager(this, Common.list.size()));
+
             }
             answerSheetAdapter = new AnswerSheetAdapter(this,Common.answerSheetList);
             answer_sheet_view.setAdapter(answerSheetAdapter);
@@ -96,8 +99,7 @@ public class QuestionActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if(Index<Common.list.size()-1)
                     {
-                        if(!isAnswerModeView)
-                            adapterChanged(Index);
+                        adapterChanged(Index);
                         Index++;
                         SetData();
                     }
@@ -108,8 +110,7 @@ public class QuestionActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if(Index>0)
                     {
-                        if(!isAnswerModeView)
-                            adapterChanged(Index);
+                        adapterChanged(Index);
                         Index--;
                         SetData();
                     }
@@ -127,13 +128,13 @@ public class QuestionActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     dialog.dismiss();
 
+
                 }
             });
             dialog.findViewById(R.id.bt_yes).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    finishGame();
                 }
             });
             dialog.show();
@@ -323,12 +324,6 @@ public class QuestionActivity extends AppCompatActivity {
             }
         });
 
-
-        if(isAnswerModeView)
-        {
-            resetAnswer();
-            showCorrectAnswer();
-        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -343,9 +338,6 @@ public class QuestionActivity extends AppCompatActivity {
 
         if(id==R.id.menu_finish_game)
         {
-            if(!isAnswerModeView)
-
-            {
                 Dialog dialog=new Dialog(QuestionActivity.this);
                 dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
                 dialog.setContentView(R.layout.finish_dialog);
@@ -365,11 +357,7 @@ public class QuestionActivity extends AppCompatActivity {
                     }
                 });
                 dialog.show();
-            }
-            else
-            {
-                finishGame();
-            }
+
             return true;
 
         }
@@ -406,6 +394,7 @@ public class QuestionActivity extends AppCompatActivity {
         Intent intent=new Intent(QuestionActivity.this,ResultActivity.class);
         startActivityForResult(intent,CODE_GET_RESULT);
         Common.timer=Common.TOTAL_TIME-time_play;
+        finish();
     }
 
     public void clearCkb()
@@ -422,95 +411,27 @@ public class QuestionActivity extends AppCompatActivity {
         if (requestCode == CODE_GET_RESULT) {
             if (resultCode == Activity.RESULT_OK) {
                 String action = data.getStringExtra("action");
-                if (action == null || TextUtils.isEmpty(action)) {
-                    int questionNum = data.getIntExtra(Common.KEY_BACK_FROM_RESULT, -1);
-                    for(int i=0;i<Common.list.size();i++)
-                    {
-                        adapterChanged(i);
+
+                if (action.equals("doitagain")) {
+                    Index = 0;
+                    time_play = Common.TOTAL_TIME;
+                    countTimer();
+                    txt_question_count.setVisibility(View.VISIBLE);
+                    txt_timer.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < Common.list.size(); i++) {
+                        Common.listanswer.set(i, "null");
+                        Common.answerSheetList.set(i, new CurrentQuestion(i, Common.ANSWER_TYPE.NO_ANSWER));
                     }
-                    Index=questionNum;
-                    isAnswerModeView = true;
+                    answerSheetAdapter.notifyDataSetChanged();
+                    resetQuestion();
                     SetData();
-                    disableAnswer();
-
-                } else {
-                    if (action.equals("viewquizanswer")) {
-                        Index = 0;
-                        isAnswerModeView = true;
-                        for(int i=0;i<Common.list.size();i++)
-                        {
-                            adapterChanged(i);
-                        }
-                        SetData();
-                        disableAnswer();
-                        answerSheetAdapter.notifyDataSetChanged();
-
-                    } else {
-                        if (action.equals("doitagain")) {
-                            Index = 0;
-                            isAnswerModeView = false;
-                            time_play=Common.TOTAL_TIME;
-                            countTimer();
-                            txt_question_count.setVisibility(View.VISIBLE);
-                            txt_timer.setVisibility(View.VISIBLE);
-                            for (int i = 0; i < Common.list.size(); i++) {
-                                Common.listanswer.set(i, "null");
-                                Common.answerSheetList.set(i, new CurrentQuestion(i, Common.ANSWER_TYPE.NO_ANSWER));
-                            }
-                            answerSheetAdapter.notifyDataSetChanged();
-                            resetQuestion();
-                            SetData();
-                        }
-                    }
                 }
             }
+
+
         }
     }
 
-    public void showCorrectAnswer() {
-        String answer=Common.list.get(Index).getAsd();
-        if(answer.equals("A"))
-        {
-            ckbA.setTypeface(null, Typeface.BOLD);
-            if(Common.listanswer.get(Index).equals("A"))
-                ckbA.setTextColor(Color.GREEN);
-            else
-                ckbA.setTextColor(Color.RED);
-        }
-        else
-        {
-            if(answer.equals("B"))
-            {
-                ckbB.setTypeface(null, Typeface.BOLD);
-                if(Common.listanswer.get(Index).equals("B"))
-                    ckbB.setTextColor(Color.GREEN);
-                else
-                    ckbB.setTextColor(Color.RED);
-            }
-            else
-            {
-                if(answer.equals("C"))
-                {
-                    ckbC.setTypeface(null, Typeface.BOLD);
-                    if(Common.listanswer.get(Index).equals("C"))
-                        ckbC.setTextColor(Color.GREEN);
-                    else
-                        ckbC.setTextColor(Color.RED);
-                }
-                else
-                {
-                    if(answer.equals("D")) {
-                        ckbD.setTypeface(null, Typeface.BOLD);
-                        if(Common.listanswer.get(Index).equals("D"))
-                            ckbD.setTextColor(Color.GREEN);
-                        else
-                            ckbD.setTextColor(Color.RED);
-                    }
-                }
-            }
-        }
-
-    }
 
     public void adapterChanged(int i)
     {
@@ -527,24 +448,8 @@ public class QuestionActivity extends AppCompatActivity {
         }
         answerSheetAdapter.notifyDataSetChanged();
     }
-    public void resetAnswer()
-    {
-        ckbA.setTypeface(null, Typeface.NORMAL);
-        ckbA.setTextColor(Color.BLACK);
-        ckbB.setTypeface(null, Typeface.NORMAL);
-        ckbB.setTextColor(Color.BLACK);
-        ckbC.setTypeface(null, Typeface.NORMAL);
-        ckbC.setTextColor(Color.BLACK);
-        ckbD.setTypeface(null, Typeface.NORMAL);
-        ckbD.setTextColor(Color.BLACK);
-    }
 
-    public void disableAnswer() {
-        ckbA.setEnabled(false);
-        ckbB.setEnabled(false);
-        ckbC.setEnabled(false);
-        ckbD.setEnabled(false);
-    }
+
     public void resetQuestion() {
         ckbA.setEnabled(true);
         ckbB.setEnabled(true);

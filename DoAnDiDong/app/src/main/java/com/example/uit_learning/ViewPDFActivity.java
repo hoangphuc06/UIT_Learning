@@ -50,11 +50,68 @@ public class ViewPDFActivity extends AppCompatActivity {
         btn_flt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+<<<<<<< Updated upstream
                 Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
                 intent.putExtra("id",id);
                 intent.putExtra("idUnit",idUnit);
                 intent.putExtra("typeUnit",typeUnit);
                 startActivity(intent);
+=======
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id);
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChild("Question"))
+                        {
+                            View view = LayoutInflater.from(ViewPDFActivity.this).inflate(R.layout.dialog_ready_do_exercises,null);
+
+                            Button godoExercises = view.findViewById(R.id.btnGoDoExercise);
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(ViewPDFActivity.this);
+                            builder.setView(view);
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            godoExercises.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent=new Intent(ViewPDFActivity.this,ReadyActivity.class);
+                                    intent.putExtra("id",id);
+                                    intent.putExtra("idUnit",idUnit);
+                                    intent.putExtra("typeUnit",typeUnit);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            View view = LayoutInflater.from(ViewPDFActivity.this).inflate(R.layout.no_question_dialog,null);
+
+                            TextView bt_ok = view.findViewById(R.id.bt_ok);
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(ViewPDFActivity.this);
+                            builder.setView(view);
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            bt_ok.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+>>>>>>> Stashed changes
             }
         });
 
