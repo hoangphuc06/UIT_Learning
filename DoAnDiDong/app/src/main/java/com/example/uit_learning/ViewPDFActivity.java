@@ -1,18 +1,28 @@
 package com.example.uit_learning;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.net.URLEncoder;
 
@@ -50,13 +60,6 @@ public class ViewPDFActivity extends AppCompatActivity {
         btn_flt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< Updated upstream
-                Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
-                intent.putExtra("id",id);
-                intent.putExtra("idUnit",idUnit);
-                intent.putExtra("typeUnit",typeUnit);
-                startActivity(intent);
-=======
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id);
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -111,7 +114,6 @@ public class ViewPDFActivity extends AppCompatActivity {
 
                     }
                 });
->>>>>>> Stashed changes
             }
         });
 
