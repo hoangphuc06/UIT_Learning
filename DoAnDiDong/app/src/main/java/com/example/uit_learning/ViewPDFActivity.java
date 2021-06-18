@@ -3,12 +3,14 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ public class ViewPDFActivity extends AppCompatActivity {
 
     FloatingActionButton btn_flt;
     WebView pdfview;
+    SwipeRefreshLayout refresh;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +44,8 @@ public class ViewPDFActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         btn_flt=findViewById(R.id.flt_btn);
+        refresh = findViewById(R.id.refresh);
+
 
         pdfview=(WebView)findViewById(R.id.viewpdf);
         pdfview.getSettings().setJavaScriptEnabled(true);
@@ -145,7 +150,20 @@ public class ViewPDFActivity extends AppCompatActivity {
 
         pdfview.loadUrl("http://docs.google.com/gview?embedded=true&url=" + url);
 
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                String url="";
+                try {
+                    url= URLEncoder.encode(fileurl,"utf-8");
+                }catch (Exception ex)
+                {}
+                pdfview.loadUrl("http://docs.google.com/gview?embedded=true&url=" + url);
+                refresh.setRefreshing(false);
+            }
+        });
     }
+
 
 
     private class Callback extends WebViewClient {
@@ -160,4 +178,5 @@ public class ViewPDFActivity extends AppCompatActivity {
         onBackPressed();
         return super.onSupportNavigateUp();
     }
+
 }
