@@ -1,32 +1,18 @@
 package com.example.uit_learning;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.net.URLEncoder;
 
@@ -34,7 +20,6 @@ public class ViewPDFActivity extends AppCompatActivity {
 
     FloatingActionButton btn_flt;
     WebView pdfview;
-    SwipeRefreshLayout refresh;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +29,11 @@ public class ViewPDFActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         btn_flt=findViewById(R.id.flt_btn);
-        refresh = findViewById(R.id.refresh);
-
 
         pdfview=(WebView)findViewById(R.id.viewpdf);
         pdfview.getSettings().setJavaScriptEnabled(true);
         pdfview.setWebViewClient(new Callback());
         pdfview.getSettings().setBuiltInZoomControls(true);
-        pdfview.getSettings().setDisplayZoomControls(false);
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
@@ -68,6 +50,13 @@ public class ViewPDFActivity extends AppCompatActivity {
         btn_flt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+<<<<<<< Updated upstream
+                Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
+                intent.putExtra("id",id);
+                intent.putExtra("idUnit",idUnit);
+                intent.putExtra("typeUnit",typeUnit);
+                startActivity(intent);
+=======
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id);
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -87,7 +76,7 @@ public class ViewPDFActivity extends AppCompatActivity {
                             godoExercises.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent=new Intent(ViewPDFActivity.this,LoadQuestionActivity.class);
+                                    Intent intent=new Intent(ViewPDFActivity.this,ReadyActivity.class);
                                     intent.putExtra("id",id);
                                     intent.putExtra("idUnit",idUnit);
                                     intent.putExtra("typeUnit",typeUnit);
@@ -122,6 +111,7 @@ public class ViewPDFActivity extends AppCompatActivity {
 
                     }
                 });
+>>>>>>> Stashed changes
             }
         });
 
@@ -150,20 +140,7 @@ public class ViewPDFActivity extends AppCompatActivity {
 
         pdfview.loadUrl("http://docs.google.com/gview?embedded=true&url=" + url);
 
-        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                String url="";
-                try {
-                    url= URLEncoder.encode(fileurl,"utf-8");
-                }catch (Exception ex)
-                {}
-                pdfview.loadUrl("http://docs.google.com/gview?embedded=true&url=" + url);
-                refresh.setRefreshing(false);
-            }
-        });
     }
-
 
 
     private class Callback extends WebViewClient {
@@ -178,5 +155,4 @@ public class ViewPDFActivity extends AppCompatActivity {
         onBackPressed();
         return super.onSupportNavigateUp();
     }
-
 }
