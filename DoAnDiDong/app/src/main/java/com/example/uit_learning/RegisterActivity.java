@@ -55,9 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         btnLoginActivity.setOnClickListener((view)->{
-            Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
-            startActivity(intent);
-            finish();
+            onBackPressed();
         });
 
         btnRegister.setOnClickListener((view)->{

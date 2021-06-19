@@ -36,12 +36,13 @@ public class LoginActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
 
+    float v= 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //Ẩn thanh actionBar
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         //kết thúc
@@ -57,6 +58,27 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Logging in...");
 
         firebaseAuth = FirebaseAuth.getInstance();
+
+        //Set animation______________________________________________________
+        textEmail.setTranslationX(800);
+        textPassword.setTranslationX(800);
+        btnForgetPassword.setTranslationX(800);
+        btnForgetPassword.setTranslationX(800);
+        btnLogin.setTranslationX(800);
+        btnRegister.setTranslationX(800);
+
+        textEmail.setAlpha(v);
+        textPassword.setAlpha(v);
+        btnForgetPassword.setAlpha(v);
+        btnLogin.setAlpha(v);
+        btnRegister.setAlpha(v);
+
+        textEmail.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(300).start();
+        textPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(500).start();
+        btnForgetPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(500).start();
+        btnLogin.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(700).start();
+        btnRegister.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(700).start();
+        //____________________________________________________________________
 
         btnRegister.setOnClickListener((view)->{
             Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
