@@ -11,11 +11,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +30,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button btnRegister, btnLogin, btnForgetPassword;
+    Button btnLogin;
+
+    TextView btnRegister,btnForgetPassword;
 
     TextInputLayout textEmail, textPassword;
 
@@ -63,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         textEmail.setTranslationX(800);
         textPassword.setTranslationX(800);
         btnForgetPassword.setTranslationX(800);
-        btnForgetPassword.setTranslationX(800);
         btnLogin.setTranslationX(800);
         btnRegister.setTranslationX(800);
 
@@ -74,37 +77,55 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setAlpha(v);
 
         textEmail.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(300).start();
-        textPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(500).start();
+        textPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(400).start();
         btnForgetPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(500).start();
-        btnLogin.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(700).start();
+        btnLogin.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(600).start();
         btnRegister.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(700).start();
         //____________________________________________________________________
 
         btnRegister.setOnClickListener((view)->{
             Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
             startActivity(intent);
-            finish();
+            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
         });
 
         btnLogin.setOnClickListener((view)->{
+
+            textEmail.setErrorEnabled(false);
+            textPassword.setErrorEnabled(false);
 
             String email = textEmail.getEditText().getText().toString().trim();
             String password  =textPassword.getEditText().getText().toString().trim();
 
             if (TextUtils.isEmpty(email))
             {
-                textEmail.setError("Bắt buộc nhập email");
+                textEmail.setError("Please enter your email");
+                textEmail.setFocusable(true);
+                textEmail.setErrorIconDrawable(null);
+                return;
+            }
+
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+            {
+                textEmail.setError("Invalid email");
+                textEmail.setFocusable(true);
+                textEmail.setErrorIconDrawable(null);
                 return;
             }
 
             if (TextUtils.isEmpty(password))
             {
-                textPassword.setError("Bắt buộc nhập mật khẩu");
+                textPassword.setError("Please enter your password");
+                textPassword.setFocusable(true);
+                textPassword.setErrorIconDrawable(null);
+                return;
             }
 
             if (password.length() < 6)
             {
-                textPassword.setError("Mật khẩu phải có ít nhất 6 kí tự");
+                textPassword.setError("Password length at least 6 characters");
+                textPassword.setFocusable(true);
+                textPassword.setErrorIconDrawable(null);
                 return;
             }
 
@@ -130,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 //                            Toast.makeText(LoginActivity.this,"Kiểm tra mail để xác thực cho lần đầu đăng nhập",Toast.LENGTH_LONG).show();
 //                        }
                         startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                         finish();
                     }
                     else
@@ -144,55 +166,83 @@ public class LoginActivity extends AppCompatActivity {
         btnForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                builder.setTitle("Reset password");
-
-                LinearLayout linearLayout = new LinearLayout(LoginActivity.this);
-
-                EditText emailEt = new EditText(LoginActivity.this);
-                emailEt.setHint("Email");
-                emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                emailEt.setMinEms(16);
-
-                linearLayout.addView(emailEt);
-                linearLayout.setPadding(10,10,10,10);
-
-                builder.setView(linearLayout);
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String email = emailEt.getText().toString().trim();
-
-                        progressDialog.setMessage("Sending mail...");
-                        progressDialog.show();
-
-                        firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                progressDialog.dismiss();
-                                if (task.isSuccessful())
-                                {
-                                    Toast.makeText(LoginActivity.this,"Email sent",Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(LoginActivity.this,"Fail..",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                progressDialog.dismiss();
-                                Toast.makeText(LoginActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-
-                builder.create().show();
+                Intent intent = new Intent(LoginActivity.this,ForgetPasswordActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+//                builder.setTitle("Reset password");
+//
+//                LinearLayout linearLayout = new LinearLayout(LoginActivity.this);
+//
+//                EditText emailEt = new EditText(LoginActivity.this);
+//                emailEt.setHint("Email");
+//                emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+//                emailEt.setMinEms(16);
+//
+//                linearLayout.addView(emailEt);
+//                linearLayout.setPadding(10,10,10,10);
+//
+//                builder.setView(linearLayout);
+//
+//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        String email = emailEt.getText().toString().trim();
+//
+//                        progressDialog.setMessage("Sending mail...");
+//                        progressDialog.show();
+//
+//                        firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                progressDialog.dismiss();
+//                                if (task.isSuccessful())
+//                                {
+//                                    Toast.makeText(LoginActivity.this,"Email sent",Toast.LENGTH_SHORT).show();
+//                                }
+//                                else
+//                                {
+//                                    Toast.makeText(LoginActivity.this,"Fail..",Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                progressDialog.dismiss();
+//                                Toast.makeText(LoginActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                    }
+//                });
+//
+//                builder.create().show();
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        textEmail.setErrorEnabled(false);
+        textPassword.setErrorEnabled(false);
+
+//        textEmail.setTranslationX(-800);
+//        textPassword.setTranslationX(-800);
+//        btnForgetPassword.setTranslationX(-800);
+//        btnLogin.setTranslationX(-800);
+//        btnRegister.setTranslationX(-800);
+//
+//        textEmail.setAlpha(v);
+//        textPassword.setAlpha(v);
+//        btnForgetPassword.setAlpha(v);
+//        btnLogin.setAlpha(v);
+//        btnRegister.setAlpha(v);
+//
+//        textEmail.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(300).start();
+//        textPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(400).start();
+//        btnForgetPassword.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(500).start();
+//        btnLogin.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(600).start();
+//        btnRegister.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(700).start();
     }
 }

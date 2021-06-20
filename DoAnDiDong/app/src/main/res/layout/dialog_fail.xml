@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_height="match_parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:lottie_rawRes="@raw/fail"
+            app:lottie_loop="true"
+            android:layout_margin="16dp"
+            app:lottie_autoPlay="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textTitle"
+                android:layout_margin="4dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fail !"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/textDesCription"
+                android:layout_margin="4dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="16sp"
+                android:textColor="@color/sub"/>
+
+            <TextView
+                android:paddingRight="24dp"
+                android:layout_margin="16dp"
+                android:id="@+id/OK"
+                android:textColor="@color/sub"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OK"
+                android:textSize="16sp"
+                android:layout_gravity="right"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
