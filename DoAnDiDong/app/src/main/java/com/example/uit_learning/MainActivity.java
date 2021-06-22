@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         //Ẩn thanh actionBar
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        // actionBar.hide();
         //kết thúc
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null)

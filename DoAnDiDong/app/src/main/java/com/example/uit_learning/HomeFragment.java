@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference reference_foundation;
 
     // RecyclerView manager
-    RecyclerView recyclerView_101;
+    RecyclerView  recyclerView_101;
     RecyclerView recyclerView_foundation;
     RecyclerView.Adapter adapter;
 

@@ -1,5 +1,6 @@
 package com.example.uit_learning.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.uit_learning.AddPostActivity;
+import com.example.uit_learning.NotificationsActivity;
 import com.example.uit_learning.PostDetailActivity;
 import com.example.uit_learning.R;
 import com.example.uit_learning.model.Notification;
@@ -110,13 +113,70 @@ public class AdapterNotifications extends RecyclerView.Adapter<AdapterNotificati
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.child(pId).exists())
                         {
-                            Intent intent = new Intent(context, PostDetailActivity.class);
-                            intent.putExtra("postId",pId);
-                            context.startActivity(intent);
+                            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users");
+                            reference1.child(firebaseAuth.getUid()).child("Notifications").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.hasChild(timestamp))
+                                    {
+                                        Activity activity = (Activity)context;
+                                        Intent intent = new Intent(context, PostDetailActivity.class);
+                                        intent.putExtra("postId",pId);
+                                        activity.startActivity(intent);
+                                        activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                                    }
+                                    else
+                                    {
+                                        View view = LayoutInflater.from(context).inflate(R.layout.dialog_error404,null);
+
+                                        TextView OK = view.findViewById(R.id.OK);
+                                        TextView description = view.findViewById(R.id.textDesCription);
+
+                                        description.setText("Notification not exist.");
+
+                                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                        builder.setView(view);
+
+                                        AlertDialog dialog = builder.create();
+                                        dialog.show();
+
+                                        OK.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
                         }
                         else
                         {
-                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
+                            View view = LayoutInflater.from(context).inflate(R.layout.dialog_error404,null);
+
+                            TextView OK = view.findViewById(R.id.OK);
+                            TextView description = view.findViewById(R.id.textDesCription);
+
+                            description.setText("Post not exist.");
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setView(view);
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            OK.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
                         }
                     }
 
@@ -138,20 +198,59 @@ public class AdapterNotifications extends RecyclerView.Adapter<AdapterNotificati
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-                        ref.child(firebaseAuth.getUid()).child("Notifications").child(timestamp).removeValue()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(context,"Notification Deleted...",Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(context,""+e.getMessage(),Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users");
+                        reference1.child(firebaseAuth.getUid()).child("Notifications").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.hasChild(timestamp))
+                                {
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                                    ref.child(firebaseAuth.getUid()).child("Notifications").child(timestamp).removeValue()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(context,"Notification Deleted...",Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(context,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                                else
+                                {
+                                    View view = LayoutInflater.from(context).inflate(R.layout.dialog_error404,null);
+
+                                    TextView OK = view.findViewById(R.id.OK);
+                                    TextView description = view.findViewById(R.id.textDesCription);
+
+                                    description.setText("Notification not exist.");
+
+                                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setView(view);
+
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+
+                                    OK.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

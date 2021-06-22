@@ -4,10 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,7 +57,7 @@ import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    String hisUid, myUid, myEmail, myName, myDp, postId, pLikes, hisDp, hisName, pImage;
+    String hisUid, myUid, myEmail, myName, myDp, postId, pLikes, hisDp, hisName, pImage, pTitle, pDescr;
 
     ImageView uPictureIv, pImageIv;
     TextView uNameTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv;
@@ -73,18 +78,30 @@ public class PostDetailActivity extends AppCompatActivity {
     boolean mProcessComment = false;
     boolean mProcessLike = false;
 
+    Toolbar toolbar;
+    TextView textToolbar;
+
+    private ClipboardManager myClipboard;
+    private ClipData myClip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Post detail");
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
+        textToolbar.setText("Post detail");
 
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
+
+        myClipboard = (ClipboardManager)PostDetailActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
 
         uPictureIv = findViewById(R.id.uPictureIv);
         pImageIv = findViewById(R.id.pImageIv);
@@ -246,6 +263,8 @@ public class PostDetailActivity extends AppCompatActivity {
                         popupMenu.getMenu().add(Menu.NONE,1,0,"Edit");
                     }
 
+                    popupMenu.getMenu().add(Menu.NONE,2,0,"Copy");
+
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
@@ -260,6 +279,13 @@ public class PostDetailActivity extends AppCompatActivity {
                                 intent.putExtra("key","editPost");
                                 intent.putExtra("editPostId",postId);
                                 startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                            } if (id == 2)
+                            {
+                                String copyText= pTitle + "\n" + pDescr;
+                                myClip = ClipData.newPlainText("text", copyText);
+                                myClipboard.setPrimaryClip(myClip);
+                                Toast.makeText(PostDetailActivity.this,"Coppied..",Toast.LENGTH_SHORT).show();
                             }
                             return false;
                         }
@@ -311,6 +337,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                 }
                                 Toast.makeText(PostDetailActivity.this,"Deleted successfully",Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
+                                onBackPressed();
                             }
 
                             @Override
@@ -344,6 +371,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
                 Toast.makeText(PostDetailActivity.this,"Deleted successfully",Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+                onBackPressed();
             }
 
             @Override
@@ -547,8 +575,8 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren())
                 {
-                    String pTitle = "" + ds.child("pTitle").getValue();
-                    String pDescr = "" + ds.child("pDescr").getValue();
+                    pTitle = "" + ds.child("pTitle").getValue();
+                    pDescr = "" + ds.child("pDescr").getValue();
                     pLikes = "" + ds.child("pLikes").getValue();
                     String pTimeStamp = "" + ds.child("pTime").getValue();
                     pImage = "" + ds.child("pImage").getValue();
@@ -611,8 +639,8 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-
-        super.onResume();
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }

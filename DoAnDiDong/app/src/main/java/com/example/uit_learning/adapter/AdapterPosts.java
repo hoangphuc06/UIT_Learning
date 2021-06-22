@@ -1,5 +1,6 @@
 package com.example.uit_learning.adapter;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -200,9 +201,11 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.child(pId).exists())
                         {
+                            Activity activity = (Activity)context;
                             Intent intent = new Intent(context, PostDetailActivity.class);
                             intent.putExtra("postId",pId);
-                            context.startActivity(intent);
+                            activity.startActivity(intent);
+                            activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                         }
                         else
                         {
@@ -329,16 +332,21 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                             }
                             else if (id == 1)
                             {
+                                Activity activity = (Activity)context;
                                 Intent intent = new Intent(context, AddPostActivity.class);
                                 intent.putExtra("key","editPost");
                                 intent.putExtra("editPostId",pId);
-                                context.startActivity(intent);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                             }
                             else if (id == 2)
                             {
+                                Activity activity1 = (Activity)context;
                                 Intent intent = new Intent(context, PostDetailActivity.class);
                                 intent.putExtra("postId",pId);
-                                context.startActivity(intent);
+                                activity1.startActivity(intent);
+                                activity1.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+
                             }
                             else if (id == 3)
                             {
