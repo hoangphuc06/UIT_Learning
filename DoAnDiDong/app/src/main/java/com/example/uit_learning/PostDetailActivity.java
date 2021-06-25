@@ -167,6 +167,7 @@ public class PostDetailActivity extends AppCompatActivity {
                             Intent intent = new Intent(PostDetailActivity.this, PostLikedByActivity.class);
                             intent.putExtra("postId",postId);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                         }
                         else
                         {

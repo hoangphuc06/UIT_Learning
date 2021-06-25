@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 
 import com.example.uit_learning.adapter.AdapterNotifications;
@@ -32,6 +34,8 @@ public class NotificationsActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     TextView textToolbar;
+
+    LayoutAnimationController layoutAnimationController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +66,10 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationsRv.setLayoutManager(layoutManager);
 
         getAllNotification();
+
     }
 
     private void getAllNotification() {
-
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.child(firebaseAuth.getUid()).child("Notifications")
@@ -73,8 +77,10 @@ public class NotificationsActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         notificationArrayList.clear();
+
                         for (DataSnapshot ds: snapshot.getChildren())
                         {
+
                             Notification model = ds.getValue(Notification.class);
 
                             notificationArrayList.add(model);
@@ -82,7 +88,9 @@ public class NotificationsActivity extends AppCompatActivity {
                             adapterNotifications = new AdapterNotifications(NotificationsActivity.this,notificationArrayList);
 
                             notificationsRv.setAdapter(adapterNotifications);
+
                         }
+
                     }
 
                     @Override

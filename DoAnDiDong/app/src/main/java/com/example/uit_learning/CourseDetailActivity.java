@@ -27,9 +27,9 @@ public class CourseDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_detail);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
 
@@ -37,7 +37,7 @@ public class CourseDetailActivity extends AppCompatActivity {
         typeCourse = intent.getStringExtra("type");
         idCourse = intent.getStringExtra("id");
 
-        actionBar.setTitle(titltCourse);
+        //actionBar.setTitle(titltCourse);
 
         recview = findViewById(R.id.recview);
         recview.setLayoutManager(new LinearLayoutManager(this));

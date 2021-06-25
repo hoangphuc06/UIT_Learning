@@ -183,18 +183,57 @@ public class AddPostActivity extends AppCompatActivity {
         progressDialog.setMessage("Updating Post...");
         progressDialog.show();
 
-        if (!editImage.equals("noImage"))
-        {
-            updateWasWithImage(title,description,editPostId);
-        }
-        else if (imageIv.getDrawable() != null)
-        {
-            updateWithNowImage(title,description,editPostId);
-        }
-        else
-        {
-            updateWithoutImage(title,description,editPostId);
-        }
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(editPostId))
+                {
+                    if (!editImage.equals("noImage"))
+                    {
+                        updateWasWithImage(title,description,editPostId);
+                    }
+                    else if (imageIv.getDrawable() != null)
+                    {
+                        updateWithNowImage(title,description,editPostId);
+                    }
+                    else
+                    {
+                        updateWithoutImage(title,description,editPostId);
+                    }
+                }
+                else
+                {
+                    progressDialog.dismiss();
+
+                    View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                    TextView OK = view.findViewById(R.id.OK);
+                    TextView description = view.findViewById(R.id.textDesCription);
+
+                    description.setText("Post not exist");
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                    builder.setView(view);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    OK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            onBackPressed();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void updateWithoutImage(String title, String description, String editPostId) {
@@ -231,6 +270,7 @@ public class AddPostActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+                                onBackPressed();
                             }
                         });
                     }
@@ -317,6 +357,7 @@ public class AddPostActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(View v) {
                                                     dialog.dismiss();
+                                                    onBackPressed();
                                                 }
                                             });
                                         }
@@ -354,7 +395,7 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -417,6 +458,7 @@ public class AddPostActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onClick(View v) {
                                                                     dialog.dismiss();
+                                                                    onBackPressed();
                                                                 }
                                                             });
                                                         }
@@ -613,6 +655,7 @@ public class AddPostActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onClick(View v) {
                                                         dialog.dismiss();
+                                                        onBackPressed();
                                                     }
                                                 });
                                             }
@@ -715,6 +758,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
                                     dialog.dismiss();
+                                    onBackPressed();
                                 }
                             });
                         }

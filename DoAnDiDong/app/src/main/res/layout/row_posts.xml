@@ -29,6 +29,7 @@
                 android:src="@drawable/ic_image_default"/>
 
             <LinearLayout
+                android:id="@+id/layoutProfile"
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

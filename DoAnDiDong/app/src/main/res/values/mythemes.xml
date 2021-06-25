@@ -6,6 +6,7 @@
         <item name="colorSecondary">@color/secondary</item>
         <item name="colorError">@color/error</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
+
     </style>
 
     <style name="ButtonMain">

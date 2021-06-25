@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.example.uit_learning.DashboardActivity;
 import com.example.uit_learning.PostDetailActivity;
 import com.example.uit_learning.PostLikedByActivity;
 import com.example.uit_learning.R;
+import com.example.uit_learning.ThereProfileActivity;
 import com.example.uit_learning.model.Post;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -230,9 +232,11 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.child(pId).exists())
                         {
+                            Activity activity = (Activity)context;
                             Intent intent = new Intent(context, PostLikedByActivity.class);
                             intent.putExtra("postId",pId);
-                            context.startActivity(intent);
+                            activity.startActivity(intent);
+                            activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                         }
                         else
                         {
@@ -245,6 +249,14 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
                     }
                 });
+            }
+        });
+
+        holder.layoutProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ThereProfileActivity.class);
+              
             }
         });
     }
@@ -439,6 +451,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                 }
                 Toast.makeText(context,"Deleted successfully",Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+
+
             }
 
             @Override
@@ -457,6 +471,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
         ImageView uPictureIv, pImageIv;
         TextView uNameTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv;
         ImageButton moreBtn, likeBtn, commentBtn;
+        View itemView;
+        LinearLayout layoutProfile;
 
         public MyHolder(@NonNull View itemView)
         {
@@ -473,6 +489,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
             moreBtn = itemView.findViewById(R.id.moreBtn);
             likeBtn = itemView.findViewById(R.id.likeBtn);
             commentBtn = itemView.findViewById(R.id.commentBtn);
+            layoutProfile = itemView.findViewById(R.id.profileLayout);
+            this.itemView = itemView;
         }
     }
 

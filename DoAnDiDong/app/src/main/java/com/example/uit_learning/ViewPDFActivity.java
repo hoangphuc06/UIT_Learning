@@ -34,9 +34,9 @@ public class ViewPDFActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pdfactivity);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
 
         btn_flt=findViewById(R.id.flt_btn);
 
@@ -51,7 +51,7 @@ public class ViewPDFActivity extends AppCompatActivity {
         String idUnit=getIntent().getStringExtra("idUnit");
         String typeUnit=getIntent().getStringExtra("typeUnit");
 
-        actionBar.setTitle(filename);
+        //actionBar.setTitle(filename);
 
         final ProgressDialog pd=new ProgressDialog(this);
         pd.setTitle(filename);

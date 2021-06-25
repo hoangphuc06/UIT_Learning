@@ -16,22 +16,55 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyThemeApp">
-        <activity android:name=".ForgetPasswordActivity"></activity>
-        <activity android:name=".ReadyActivity" />
-        <activity android:name=".ViewResultActivity" />
-        <activity android:name=".ResultActivity" />
-        <activity android:name=".QuestionActivity" />
-        <activity android:name=".LoadQuestionActivity" />
-        <activity android:name=".ViewPDFActivity" />
-        <activity android:name=".CourseDetailActivity" />
-        <activity android:name=".PostLikedByActivity" />
-        <activity android:name=".NotificationsActivity" />
-        <activity android:name=".PostDetailActivity" />
-        <activity android:name=".AddPostActivity" />
-        <activity android:name=".DashboardActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ThereProfileActivity"></activity>
+        <activity
+            android:name=".ForgetPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReadyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewResultActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ResultActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".QuestionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoadQuestionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewPDFActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CourseDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PostLikedByActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NotificationsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PostDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddPostActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DashboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
