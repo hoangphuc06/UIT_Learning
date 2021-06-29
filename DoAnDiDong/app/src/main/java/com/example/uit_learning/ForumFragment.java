@@ -1,6 +1,7 @@
 package com.example.uit_learning;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.uit_learning.adapter.AdapterPosts;
 import com.example.uit_learning.model.Post;
@@ -39,7 +43,6 @@ public class ForumFragment extends Fragment {
     List<Post> postList;
     AdapterPosts adapterPosts;
 
-
     public ForumFragment() {
         // Required empty public constructor
     }
@@ -53,6 +56,7 @@ public class ForumFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
 
         recyclerView = view.findViewById(R.id.postRecycleView);
+        recyclerView.setItemViewCacheSize(10);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         layoutManager.setStackFromEnd(true);
@@ -160,8 +164,27 @@ public class ForumFragment extends Fragment {
             }
         });
 
+        MenuItem item1 = menu.findItem(R.id.action_add_post);
+        item1.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                startActivity(new Intent(getContext(),AddPostActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                return false;
+            }
+        });
+
+        MenuItem item2 = menu.findItem(R.id.action_open_notification);
+        item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                startActivity(new Intent(getContext(), NotificationsActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                return false;
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
 }

@@ -1,5 +1,9 @@
 package com.example.uit_learning.adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +18,11 @@ import java.util.List;
 
 public class AdapterSlider extends SliderViewAdapter<AdapterSlider.MyHolder> {
 
+    Context context;
     List<Slider> sliders;
 
-    public AdapterSlider(List<Slider> sliders) {
+    public AdapterSlider(Context context, List<Slider> sliders) {
+        this.context = context;
         this.sliders = sliders;
     }
 
@@ -33,6 +39,22 @@ public class AdapterSlider extends SliderViewAdapter<AdapterSlider.MyHolder> {
     public void onBindViewHolder(MyHolder viewHolder, int position) {
 
         viewHolder.setImage(sliders.get(position));
+
+        String des = sliders.get(position).getDescription();
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!des.equals("0"))
+                {
+                    Activity activity = (Activity)context;
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(des));
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                }
+
+            }
+        });
 
     }
 

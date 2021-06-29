@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference reference_foundation;
 
     // RecyclerView manager
-    RecyclerView recyclerView_101;
+    RecyclerView  recyclerView_101;
     RecyclerView recyclerView_foundation;
     RecyclerView.Adapter adapter;
 
@@ -100,7 +100,7 @@ public class HomeFragment extends Fragment {
 
                     sliderList.add(slider);
 
-                    adapterSlider = new AdapterSlider(sliderList);
+                    adapterSlider = new AdapterSlider(getActivity(),sliderList);
 
                     sliderView.setSliderAdapter(adapterSlider);
                 }
@@ -112,7 +112,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        AdapterSlider adapterSlider = new AdapterSlider(sliderList);
+        AdapterSlider adapterSlider = new AdapterSlider(getActivity(),sliderList);
 
         sliderView.setSliderAdapter(adapterSlider);
         sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!

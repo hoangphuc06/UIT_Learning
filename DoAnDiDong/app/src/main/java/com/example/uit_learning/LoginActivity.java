@@ -46,10 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //Ẩn thanh actionBar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
-        //kết thúc
 
         btnLogin  =findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);

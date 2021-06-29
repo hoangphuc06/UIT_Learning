@@ -33,7 +33,7 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
     protected void onBindViewHolder(@NonNull  AdapterUnits.myviewholder holder, int position, @NonNull Unit model) {
         holder.header.setText(model.getFilename());
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(model.getIdUnit()).child(model.getId());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(model.getTypeUnit()).child(model.getIdUnit()).child(model.getId());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

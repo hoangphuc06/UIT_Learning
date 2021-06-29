@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Common {
     public static List<CurrentQuestion> answerSheetList=new ArrayList<>();
-    public static final int TOTAL_TIME = 5*60*1000;
+    public static final int TOTAL_TIME = 10*1000;
     public static int timer=0;
     public static int right_answer_cout;
     public static int wrong_answer_cout;

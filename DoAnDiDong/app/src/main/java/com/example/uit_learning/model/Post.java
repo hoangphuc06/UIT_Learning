@@ -1,5 +1,7 @@
 package com.example.uit_learning.model;
 
+import java.util.List;
+
 public class Post {
     String pId;
     String pTitle;
@@ -9,14 +11,12 @@ public class Post {
     String pTime;
     String uid;
     String uEmail;
-    String uDp;
-    String uName;
     String pComments;
 
     public Post() {
     }
 
-    public Post(String pId, String pTitle, String pDescr, String pLikes, String pImage, String pTime, String uid, String uEmail, String uDp, String uName, String pComments) {
+    public Post(String pId, String pTitle, String pDescr, String pLikes, String pImage, String pTime, String uid, String uEmail, String pComments) {
         this.pId = pId;
         this.pTitle = pTitle;
         this.pDescr = pDescr;
@@ -25,8 +25,6 @@ public class Post {
         this.pTime = pTime;
         this.uid = uid;
         this.uEmail = uEmail;
-        this.uDp = uDp;
-        this.uName = uName;
         this.pComments = pComments;
     }
 
@@ -94,22 +92,6 @@ public class Post {
         this.uEmail = uEmail;
     }
 
-    public String getuDp() {
-        return uDp;
-    }
-
-    public void setuDp(String uDp) {
-        this.uDp = uDp;
-    }
-
-    public String getuName() {
-        return uName;
-    }
-
-    public void setuName(String uName) {
-        this.uName = uName;
-    }
-
     public String getpComments() {
         return pComments;
     }
@@ -117,4 +99,5 @@ public class Post {
     public void setpComments(String pComments) {
         this.pComments = pComments;
     }
+
 }

@@ -1,11 +1,13 @@
 package com.example.uit_learning.adapter;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.text.format.DateFormat;
 import android.view.Gravity;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -28,13 +31,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uit_learning.AddPostActivity;
 import com.example.uit_learning.DashboardActivity;
+import com.example.uit_learning.MyProfileActivity;
 import com.example.uit_learning.PostDetailActivity;
 import com.example.uit_learning.PostLikedByActivity;
 import com.example.uit_learning.R;
+import com.example.uit_learning.ThereProfileActivity;
 import com.example.uit_learning.model.Post;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +55,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
@@ -57,11 +64,6 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
     String myUid;
 
-    private DatabaseReference likesRef;
-    private DatabaseReference postsRef;
-
-    Boolean mProcessLike = false;
-
     private ClipboardManager myClipboard;
     private ClipData myClip;
 
@@ -69,9 +71,6 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
         this.context = context;
         this.postList = postList;
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
-        postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
-
     }
 
     @NonNull
@@ -85,8 +84,6 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         String uid = postList.get(position).getUid();
         String uEmail = postList.get(position).getuEmail();
-        String uName = postList.get(position).getuName();
-        String uDp = postList.get(position).getuDp();
         String pId = postList.get(position).getpId();
         String pTitle = postList.get(position).getpTitle();
         String pDescription = postList.get(position).getpDescr();
@@ -101,36 +98,77 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
         myClipboard = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
 
-        holder.uNameTv.setText(uName);
+        holder.pIdTv.setText("Id: " + pId);
+
+//        Random rnd = new Random();
+//        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+//        holder.layoutColor.setBackgroundColor(color);
+
+
         holder.pTimeTv.setText(pTime);
-        holder.pTitleTv.setText(pTitle);
-        holder.pDescriptionTv.setText(pDescription);
-        holder.pLikesTv.setText(pLikes + " Likes");
-        holder.pCommentsTv.setText(pComments + " Comments");
-
-        setLikes(holder,pId);
-
-        try {
-            Picasso.get().load(uDp).placeholder(R.drawable.ic_image_default).into(holder.uPictureIv);
-        }
-        catch (Exception e) { }
-
-        if (pImage.equals("noImage"))
+        holder.pTitleTv.setText("Topic: " + pTitle);
+        holder.pLikesTv.setText(pLikes);
+        holder.pCommentsTv.setText(pComments);
+        if (pDescription.length() > 30)
         {
-            holder.pImageIv.setVisibility(View.GONE);
+            holder.pDescriptionTv.setText(pDescription.substring(0,31).trim() + "...");
         }
         else
         {
-            holder.pImageIv.setVisibility(View.VISIBLE);
-
-            try {
-                Picasso.get().load(pImage).into(holder.pImageIv);
-            }
-            catch (Exception e)
-            {
-
-            }
+            holder.pDescriptionTv.setText(pDescription);
         }
+
+        // Load hinh + ten
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(uid);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String uDp = snapshot.child("image").getValue(String.class);
+                try {
+                    Picasso.get().load(uDp).placeholder(R.drawable.ic_image_default).into(holder.uPictureIv);
+                }
+                catch (Exception e) { }
+
+                String uName = snapshot.child("name").getValue(String.class);
+                holder.uNameTv.setText(uName);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+        holder.btnGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child(pId).exists())
+                        {
+                            Activity activity = (Activity)context;
+                            Intent intent = new Intent(context, PostDetailActivity.class);
+                            intent.putExtra("postId",pId);
+                            activity.startActivity(intent);
+                            activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        }
+                        else
+                        {
+                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
 
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -140,7 +178,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
             }
         });
 
-        holder.likeBtn.setOnClickListener(new View.OnClickListener() {
+
+        holder.uNameTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
@@ -149,33 +188,21 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.child(pId).exists())
                         {
-                            int pLikes = Integer.parseInt(postList.get(position).getpLikes());
-                            mProcessLike = true;
-                            String postIde = postList.get(position).getpId();
-                            likesRef.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (mProcessLike) {
-                                        if (snapshot.child(postIde).hasChild(myUid)) {
-                                            postsRef.child(postIde).child("pLikes").setValue("" + (pLikes-1));
-                                            likesRef.child(postIde).child(myUid).removeValue();
-                                            mProcessLike = false;
-                                        }
-                                        else {
-                                            postsRef.child(postIde).child("pLikes").setValue("" + (pLikes+1));
-                                            likesRef.child(postIde).child(myUid).setValue("Liked");
-                                            mProcessLike = false;
-
-                                            addToHisNotifications(""+uid,""+pId,"Liked your post");
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
+                            if (uid.equals(myUid))
+                            {
+                                Activity activity = (Activity)context;
+                                Intent intent = new Intent(context, MyProfileActivity.class);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                            }
+                            else
+                            {
+                                Activity activity = (Activity)context;
+                                Intent intent = new Intent(context, ThereProfileActivity.class);
+                                intent.putExtra("uid",uid);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                            }
                         }
                         else
                         {
@@ -188,114 +215,6 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
                     }
                 });
-            }
-        });
-
-        holder.commentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
-                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.child(pId).exists())
-                        {
-                            Intent intent = new Intent(context, PostDetailActivity.class);
-                            intent.putExtra("postId",pId);
-                            context.startActivity(intent);
-                        }
-                        else
-                        {
-                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        });
-
-        holder.pLikesTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
-                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.child(pId).exists())
-                        {
-                            Intent intent = new Intent(context, PostLikedByActivity.class);
-                            intent.putExtra("postId",pId);
-                            context.startActivity(intent);
-                        }
-                        else
-                        {
-                            Toast.makeText(context,"Post not exist",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        });
-    }
-
-    private void addToHisNotifications (String hisUid, String pId, String notification) {
-
-        if (!hisUid.equals(myUid))
-        {
-            String timeStamp = "" + System.currentTimeMillis();
-
-            HashMap<Object,String> hashMap = new HashMap<>();
-            hashMap.put("pId",pId);
-            hashMap.put("timestamp",timeStamp);
-            hashMap.put("pUid",hisUid);
-            hashMap.put("notification",notification);
-            hashMap.put("sUid",myUid);
-
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-            ref.child(hisUid).child("Notifications").child(timeStamp).setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-
-                        }
-                    });
-        }
-
-    }
-
-    private void setLikes(MyHolder holder, String postKey) {
-        likesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(postKey).hasChild(myUid))
-                {
-                    holder.likeBtn.setImageResource(R.drawable.ic_liked_24);
-
-                }
-                else
-                {
-                    holder.likeBtn.setImageResource(R.drawable.ic_like_24);
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
@@ -329,16 +248,21 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                             }
                             else if (id == 1)
                             {
+                                Activity activity = (Activity)context;
                                 Intent intent = new Intent(context, AddPostActivity.class);
                                 intent.putExtra("key","editPost");
                                 intent.putExtra("editPostId",pId);
-                                context.startActivity(intent);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                             }
                             else if (id == 2)
                             {
+                                Activity activity1 = (Activity)context;
                                 Intent intent = new Intent(context, PostDetailActivity.class);
                                 intent.putExtra("postId",pId);
-                                context.startActivity(intent);
+                                activity1.startActivity(intent);
+                                activity1.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+
                             }
                             else if (id == 3)
                             {
@@ -431,6 +355,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                 }
                 Toast.makeText(context,"Deleted successfully",Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+
+
             }
 
             @Override
@@ -446,16 +372,17 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        ImageView uPictureIv, pImageIv;
-        TextView uNameTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv;
-        ImageButton moreBtn, likeBtn, commentBtn;
+        ImageView uPictureIv;
+        TextView uNameTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv, pIdTv;
+        ImageButton moreBtn, btnGo;
+        View itemView;
+        //LinearLayout layoutColor;
 
         public MyHolder(@NonNull View itemView)
         {
             super(itemView);
 
             uPictureIv = itemView.findViewById(R.id.uPictureIv);
-            pImageIv = itemView.findViewById(R.id.pImageIv);
             uNameTv = itemView.findViewById(R.id.uNameTv);
             pTimeTv = itemView.findViewById(R.id.pTimeTv);
             pTitleTv = itemView.findViewById(R.id.pTitleTv);
@@ -463,8 +390,9 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
             pLikesTv = itemView.findViewById(R.id.pLikeTv);
             pCommentsTv = itemView.findViewById(R.id.pCommentsTv);
             moreBtn = itemView.findViewById(R.id.moreBtn);
-            likeBtn = itemView.findViewById(R.id.likeBtn);
-            commentBtn = itemView.findViewById(R.id.commentBtn);
+            pIdTv = itemView.findViewById(R.id.pIdTv);
+            btnGo = itemView.findViewById(R.id.btnGo);
+            this.itemView = itemView;
         }
     }
 

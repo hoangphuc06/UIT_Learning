@@ -1,6 +1,8 @@
 package com.example.uit_learning.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.uit_learning.MyProfileActivity;
+import com.example.uit_learning.PostDetailActivity;
 import com.example.uit_learning.R;
+import com.example.uit_learning.ThereProfileActivity;
 import com.example.uit_learning.model.Post;
 import com.example.uit_learning.model.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -39,18 +50,52 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
         String name = userList.get(position).getName();
         String email = userList.get(position).getEmail();
         String image = userList.get(position).getImage();
+        String uid = userList.get(position).getUid();
 
-        holder.nameTv.setText(name);
+        //holder.nameTv.setText(name);
         holder.emailTv.setText(email);
 
-        try
-        {
-            Picasso.get().load(image).placeholder(R.drawable.ic_image_default).into(holder.avatarIv);
-        }
-        catch (Exception e)
-        {
-            //Picasso.get().load(R.drawable.ic_image_default).into(holder.avatarIv);
-        }
+        //Load hinh + ten
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(uid);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String link = snapshot.child("image").getValue(String.class);
+                try {
+                    Picasso.get().load(link).placeholder(R.drawable.ic_image_default).into(holder.avatarIv);
+                }
+                catch (Exception e) { }
+
+                String name = snapshot.child("name").getValue(String.class);
+                holder.nameTv.setText(name);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                {
+                    Activity activity = (Activity)context;
+                    Intent intent = new Intent(context, MyProfileActivity.class);
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                }
+                else
+                {
+                    Activity activity = (Activity)context;
+                    Intent intent = new Intent(context, ThereProfileActivity.class);
+                    intent.putExtra("uid",uid);
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                }
+            }
+        });
     }
 
     @Override

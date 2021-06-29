@@ -3,10 +3,12 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,10 +17,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -50,6 +56,11 @@ public class AddPostActivity extends AppCompatActivity {
     ImageView imageIv;
     Button uploadBtn;
 
+    ImageButton pDeleteImageBtn, pAddImageBtn;
+
+    Toolbar toolbar;
+    TextView textToolbar;
+
     private static final int STORAGE_REQUEST_CODE = 100;
     private static final int IMAGGE_PICK_GALLERY_CODE = 200;
 
@@ -59,7 +70,7 @@ public class AddPostActivity extends AppCompatActivity {
 
     String name, email, uid, dp;
 
-    String editTitle, editDescription, editImage;
+    String editTitle, editDescription, editImage, editTimestamp;
 
     ProgressDialog progressDialog;
 
@@ -68,8 +79,13 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -77,6 +93,8 @@ public class AddPostActivity extends AppCompatActivity {
         descriptionEd = findViewById(R.id.pDescriptionEt);
         imageIv = findViewById(R.id.pImageIv);
         uploadBtn = findViewById(R.id.pUploadBtn);
+        pDeleteImageBtn = findViewById(R.id.pDeleteImageBtn);
+        pAddImageBtn = findViewById(R.id.pAddImageBtn);
 
         user = firebaseAuth.getCurrentUser();
         email = user.getEmail();
@@ -93,14 +111,18 @@ public class AddPostActivity extends AppCompatActivity {
         String editPostId = "" + intent.getStringExtra("editPostId");
         if (isUpdateKey.equals("editPost"))
         {
-            getSupportActionBar().setTitle("Update Post");
+            //getSupportActionBar().setTitle("Update Post");
+            textToolbar.setText("Update Post");
             uploadBtn.setText("Update");
             loadPostData(editPostId);
         }
         else
         {
-            getSupportActionBar().setTitle("Add New Post");
+            //getSupportActionBar().setTitle("Add New Post");
+            textToolbar.setText("Add new post");
             uploadBtn.setText("Upload");
+            pDeleteImageBtn.setVisibility(View.GONE);
+            imageIv.setVisibility(View.GONE);
         }
 
         Query query = userDbRef.orderByChild("email").equalTo(email);
@@ -118,20 +140,6 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
-
-        imageIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkStoragePermission())
-                {
-                    requestStoragePermission();
-                }
-                else
-                {
-                    pickFromGallery();
-                }
             }
         });
 
@@ -163,24 +171,178 @@ public class AddPostActivity extends AppCompatActivity {
                 }
             }
         });
+
+        pDeleteImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageIv.setImageDrawable(null);
+                pDeleteImageBtn.setVisibility(View.GONE);
+                imageIv.setVisibility(View.GONE);
+            }
+        });
+
+        pAddImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!checkStoragePermission())
+                {
+                    requestStoragePermission();
+                }
+                else
+                {
+                    pickFromGallery();
+                }
+            }
+        });
     }
 
     private void beginUpdate(String title, String description, String editPostId) {
         progressDialog.setMessage("Updating Post...");
         progressDialog.show();
 
-        if (!editImage.equals("noImage"))
-        {
-            updateWasWithImage(title,description,editPostId);
-        }
-        else if (imageIv.getDrawable() != null)
-        {
-            updateWithNowImage(title,description,editPostId);
-        }
-        else
-        {
-            updateWithoutImage(title,description,editPostId);
-        }
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(editPostId))
+                {
+                    if (!editImage.equals("noImage"))
+                    {
+                        if (imageIv.getDrawable() != null)
+                        {
+                            updateWasWithImage(title,description,editPostId);
+                        }
+                        else
+                        {
+                            updateWasWithImage_NowNoImage(title,description,editPostId,editImage);
+                        }
+
+                    }
+                    else
+                    {
+                        if (imageIv.getDrawable() != null)
+                        {
+                            updateWithNowImage(title,description,editPostId);
+                        }
+                        else
+                        {
+                            updateWithoutImage(title,description,editPostId);
+                        }
+
+                    }
+                }
+                else
+                {
+                    progressDialog.dismiss();
+
+                    View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                    TextView OK = view.findViewById(R.id.OK);
+                    TextView description = view.findViewById(R.id.textDesCription);
+
+                    description.setText("Post not exist");
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                    builder.setView(view);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    OK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            onBackPressed();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void updateWasWithImage_NowNoImage(String title, String description, String editPostId, String editImage) {
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("uid",uid);
+        hashMap.put("uName",name);
+        hashMap.put("uEmail",email);
+        hashMap.put("uDp",dp);
+        hashMap.put("pTitle",title);
+        hashMap.put("pDescr",description);
+        hashMap.put("pImage","noImage");
+
+        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(editImage);
+        ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+                reference.child(editPostId).updateChildren(hashMap)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                progressDialog.dismiss();
+
+                                View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
+
+                                TextView OK = view.findViewById(R.id.OK);
+                                TextView description = view.findViewById(R.id.textDesCription);
+
+                                description.setText("Your post already updated.");
+
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                builder.setView(view);
+
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+
+                                OK.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                        onBackPressed();
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+
+                                View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                                TextView OK = view.findViewById(R.id.OK);
+                                TextView description = view.findViewById(R.id.textDesCription);
+
+                                description.setText("Some error occur.");
+
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                builder.setView(view);
+
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+
+                                OK.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+
     }
 
     private void updateWithoutImage(String title, String description, String editPostId) {
@@ -199,14 +361,53 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         progressDialog.dismiss();
-                        Toast.makeText(AddPostActivity.this,"Updated..",Toast.LENGTH_SHORT).show();
+
+                        View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
+
+                        TextView OK = view.findViewById(R.id.OK);
+                        TextView description = view.findViewById(R.id.textDesCription);
+
+                        description.setText("Your post already updated.");
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                        builder.setView(view);
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        OK.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                onBackPressed();
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+
+                        View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                        TextView OK = view.findViewById(R.id.OK);
+                        TextView description = view.findViewById(R.id.textDesCription);
+
+                        description.setText("Some error occur.");
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                        builder.setView(view);
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        OK.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
                     }
                 });
     }
@@ -247,14 +448,53 @@ public class AddPostActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             progressDialog.dismiss();
-                                            Toast.makeText(AddPostActivity.this,"Updated..",Toast.LENGTH_SHORT).show();
+
+                                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
+
+                                            TextView OK = view.findViewById(R.id.OK);
+                                            TextView description = view.findViewById(R.id.textDesCription);
+
+                                            description.setText("Your post already updated.");
+
+                                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                            builder.setView(view);
+
+                                            AlertDialog dialog = builder.create();
+                                            dialog.show();
+
+                                            OK.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    dialog.dismiss();
+                                                    onBackPressed();
+                                                }
+                                            });
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             progressDialog.dismiss();
-                                            Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+
+                                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                                            TextView OK = view.findViewById(R.id.OK);
+                                            TextView description = view.findViewById(R.id.textDesCription);
+
+                                            description.setText("Some error occur.");
+
+                                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                            builder.setView(view);
+
+                                            AlertDialog dialog = builder.create();
+                                            dialog.show();
+
+                                            OK.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
                                         }
                                     });
                         }
@@ -264,7 +504,7 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -310,14 +550,52 @@ public class AddPostActivity extends AppCompatActivity {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
                                                             progressDialog.dismiss();
-                                                            Toast.makeText(AddPostActivity.this,"Updated..",Toast.LENGTH_SHORT).show();
+                                                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
+
+                                                            TextView OK = view.findViewById(R.id.OK);
+                                                            TextView description = view.findViewById(R.id.textDesCription);
+
+                                                            description.setText("Your post already updated.");
+
+                                                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                                            builder.setView(view);
+
+                                                            AlertDialog dialog = builder.create();
+                                                            dialog.show();
+
+                                                            OK.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View v) {
+                                                                    dialog.dismiss();
+                                                                    onBackPressed();
+                                                                }
+                                                            });
                                                         }
                                                     })
                                                     .addOnFailureListener(new OnFailureListener() {
                                                         @Override
                                                         public void onFailure(@NonNull Exception e) {
                                                             progressDialog.dismiss();
-                                                            Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+
+                                                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                                                            TextView OK = view.findViewById(R.id.OK);
+                                                            TextView description = view.findViewById(R.id.textDesCription);
+
+                                                            description.setText("Some error occur.");
+
+                                                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                                            builder.setView(view);
+
+                                                            AlertDialog dialog = builder.create();
+                                                            dialog.show();
+
+                                                            OK.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View v) {
+                                                                    dialog.dismiss();
+                                                                }
+                                                            });
                                                         }
                                                     });
                                         }
@@ -327,7 +605,25 @@ public class AddPostActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         progressDialog.dismiss();
-                                        Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                                        View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                                        TextView OK = view.findViewById(R.id.OK);
+                                        TextView description = view.findViewById(R.id.textDesCription);
+
+                                        description.setText("Some error occur.");
+
+                                        final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                        builder.setView(view);
+
+                                        AlertDialog dialog = builder.create();
+                                        dialog.show();
+
+                                        OK.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                dialog.dismiss();
+                                            }
+                                        });
                                     }
                                 });
                     }
@@ -336,7 +632,25 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                        View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                        TextView OK = view.findViewById(R.id.OK);
+                        TextView description = view.findViewById(R.id.textDesCription);
+
+                        description.setText("Some error occur.");
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                        builder.setView(view);
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        OK.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
                     }
                 });
     }
@@ -352,6 +666,7 @@ public class AddPostActivity extends AppCompatActivity {
                     editTitle = "" + ds.child("pTitle").getValue();
                     editDescription = "" + ds.child("pDescr").getValue();
                     editImage = "" + ds.child("pImage").getValue();
+                    editTimestamp ="" + ds.child("pTime").getValue();
 
                     titleEd.setText(editTitle);
                     descriptionEd.setText(editDescription);
@@ -365,6 +680,11 @@ public class AddPostActivity extends AppCompatActivity {
                         {
 
                         }
+                    }
+                    else
+                    {
+                        pDeleteImageBtn.setVisibility(View.GONE);
+                        imageIv.setVisibility(View.GONE);
                     }
                 }
             }
@@ -425,20 +745,59 @@ public class AddPostActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 progressDialog.dismiss();
-                                                Toast.makeText(AddPostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
+                                                //Toast.makeText(AddPostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
                                                 titleEd.setText("");
                                                 descriptionEd.setText("");
                                                 imageIv.setImageURI(null);
                                                 imageIv.setMinimumHeight(200);
                                                 imageIv.setMinimumHeight(200);
                                                 image_uri = null;
+
+                                                View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
+
+                                                TextView OK = view.findViewById(R.id.OK);
+                                                TextView description = view.findViewById(R.id.textDesCription);
+
+                                                description.setText("Your post published.");
+
+                                                final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                                builder.setView(view);
+
+                                                AlertDialog dialog = builder.create();
+                                                dialog.show();
+
+                                                OK.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        dialog.dismiss();
+                                                        onBackPressed();
+                                                    }
+                                                });
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 progressDialog.dismiss();
-                                                Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                                                View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                                                TextView OK = view.findViewById(R.id.OK);
+                                                TextView description = view.findViewById(R.id.textDesCription);
+
+                                                description.setText("Some error occur.");
+
+                                                final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                                                builder.setView(view);
+
+                                                AlertDialog dialog = builder.create();
+                                                dialog.show();
+
+                                                OK.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
                                             }
                                         });
                             }
@@ -448,7 +807,25 @@ public class AddPostActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                            TextView OK = view.findViewById(R.id.OK);
+                            TextView description = view.findViewById(R.id.textDesCription);
+
+                            description.setText("Some error occur.");
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                            builder.setView(view);
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            OK.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
                         }
                     });
         }
@@ -473,18 +850,57 @@ public class AddPostActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             progressDialog.dismiss();
-                            Toast.makeText(AddPostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(AddPostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
                             titleEd.setText("");
                             descriptionEd.setText("");
                             imageIv.setImageURI(null);
                             image_uri = null;
+
+                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
+
+                            TextView OK = view.findViewById(R.id.OK);
+                            TextView description = view.findViewById(R.id.textDesCription);
+
+                            description.setText("Your post published.");
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                            builder.setView(view);
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            OK.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                    onBackPressed();
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                            View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_fail,null);
+
+                            TextView OK = view.findViewById(R.id.OK);
+                            TextView description = view.findViewById(R.id.textDesCription);
+
+                            description.setText("Some error occur.");
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                            builder.setView(view);
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            OK.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
                         }
                     });
         }
@@ -531,9 +947,21 @@ public class AddPostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK)
         {
+
             if (requestCode == IMAGGE_PICK_GALLERY_CODE)
             {
-                image_uri = data.getData();
+                pDeleteImageBtn.setVisibility(View.VISIBLE);
+                imageIv.setVisibility(View.VISIBLE);
+                CropImage.activity(data.getData())
+                        .start(this);
+            }
+
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+            {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+                image_uri = result.getUri();
+
                 imageIv.setImageURI(image_uri);
             }
         }
@@ -544,6 +972,12 @@ public class AddPostActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 
 }

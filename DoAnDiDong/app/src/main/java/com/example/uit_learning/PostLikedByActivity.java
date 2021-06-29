@@ -3,10 +3,12 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.example.uit_learning.adapter.AdapterUsers;
 import com.example.uit_learning.model.User;
@@ -30,15 +32,22 @@ public class PostLikedByActivity extends AppCompatActivity {
 
     AdapterUsers adapterUsers;
 
+    Toolbar toolbar;
+    TextView textToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_liked_by);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Post liked by");
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
+        textToolbar.setText("Post liked by");
 
         recyclerView = findViewById(R.id.recyclerView);
 
@@ -92,5 +101,11 @@ public class PostLikedByActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }

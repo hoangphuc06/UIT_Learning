@@ -113,7 +113,7 @@ public class ResultActivity extends AppCompatActivity {
             HashMap<Object,String> hashMap = new HashMap<>();
             hashMap.put("uid",uid);
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(idUnit).child(id).child(uid);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(typeUnit).child(idUnit).child(id).child(uid);
             reference.setValue(hashMap);
 
         } else {

@@ -47,8 +47,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         //Ẩn thanh actionBar
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+       // ActionBar actionBar = getSupportActionBar();
+        //actionBar.hide();
         //kết thúc
 
         btnLoginActivity = findViewById(R.id.btnLoginActivity);
@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             if (!password.equals(conpassword))
             {
-                textConPassword.setError("Confirmation password does not match");
+                textConPassword.setError("Confirm password does not match");
                 textConPassword.setFocusable(true);
                 textConPassword.setErrorIconDrawable(null);
                 return;

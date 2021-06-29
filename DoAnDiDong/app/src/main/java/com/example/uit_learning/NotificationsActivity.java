@@ -3,9 +3,14 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.widget.TextView;
 
 import com.example.uit_learning.adapter.AdapterNotifications;
 import com.example.uit_learning.model.Notification;
@@ -27,25 +32,45 @@ public class NotificationsActivity extends AppCompatActivity {
     ArrayList<Notification> notificationArrayList;
     AdapterNotifications adapterNotifications;
 
+    Toolbar toolbar;
+    TextView textToolbar;
+
+    LayoutAnimationController layoutAnimationController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Notifications");
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
+        textToolbar.setText("Notifications");
 
         firebaseAuth = FirebaseAuth.getInstance();
 
         notificationsRv = findViewById(R.id.notificationsRv);
+        notificationsRv.setItemViewCacheSize(10);
+
+        notificationArrayList = new ArrayList<>();
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(NotificationsActivity.this);
+
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+
+
+        notificationsRv.setLayoutManager(layoutManager);
 
         getAllNotification();
+
     }
 
     private void getAllNotification() {
-        notificationArrayList = new ArrayList<>();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.child(firebaseAuth.getUid()).child("Notifications")
@@ -53,16 +78,20 @@ public class NotificationsActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         notificationArrayList.clear();
+
                         for (DataSnapshot ds: snapshot.getChildren())
                         {
+
                             Notification model = ds.getValue(Notification.class);
 
                             notificationArrayList.add(model);
+
+                            adapterNotifications = new AdapterNotifications(NotificationsActivity.this,notificationArrayList);
+
+                            notificationsRv.setAdapter(adapterNotifications);
+
                         }
 
-                        adapterNotifications = new AdapterNotifications(NotificationsActivity.this,notificationArrayList);
-
-                        notificationsRv.setAdapter(adapterNotifications);
                     }
 
                     @Override
@@ -76,5 +105,11 @@ public class NotificationsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }
