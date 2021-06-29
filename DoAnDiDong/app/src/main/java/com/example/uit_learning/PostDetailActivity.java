@@ -31,6 +31,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.uit_learning.adapter.AdapterComments;
 import com.example.uit_learning.model.Comment;
 import com.example.uit_learning.model.Post;
@@ -49,11 +54,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class PostDetailActivity extends AppCompatActivity {
 
@@ -83,6 +91,47 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private ClipboardManager myClipboard;
     private ClipData myClip;
+
+    private void sendNotification(String title, String message, String token) {
+        try {
+            RequestQueue queue = Volley.newRequestQueue(PostDetailActivity.this);
+
+            String url = "https://fcm.googleapis.com/fcm/send";
+
+            JSONObject data = new JSONObject();
+            data.put("title", title);
+            data.put("body", message);
+            JSONObject notification_data = new JSONObject();
+            notification_data.put("data", data);
+            notification_data.put("to", token);
+
+            JsonObjectRequest request = new JsonObjectRequest(url, notification_data, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    String api_key_header_value = "Key=AAAAvxcNqbc:APA91bFRDNIPGgLZm5T0TCKCoaozWOiywjxvow1aPcZW2bXdaXynoNHgJsDlJ2H_b5Jx3NaG_V3LqefhToaS6jGf1uLxYEq5wWbTp3OeSffp_fBWaaYZgcDnCYp4v0jl4xO9KxGRs2QJ";
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Authorization", api_key_header_value);
+                    return headers;
+                }
+            };
+
+            queue.add(request);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -477,6 +526,18 @@ public class PostDetailActivity extends AppCompatActivity {
                                     mProcessLike = false;
 
                                     addToHisNotifications(""+hisUid,""+postId,"Liked your post");
+                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            String token = snapshot.getValue(String.class);
+                                            sendNotification("UIT Learning", myName + " đã thích bài post của bạn", token);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
                             }
                         }

@@ -63,6 +63,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
     List<Post> postList;
 
     String myUid;
+    String myName;
 
     private ClipboardManager myClipboard;
     private ClipData myClip;
