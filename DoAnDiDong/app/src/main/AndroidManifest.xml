@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_laucher_2"
@@ -16,7 +17,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyThemeApp">
-        <activity android:name=".ThereProfileActivity"></activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
+
+        <activity android:name=".ChangePasswordActivity"></activity>
+        <activity android:name=".MyProfileActivity" />
+        <activity android:name=".ThereProfileActivity" />
         <activity
             android:name=".ForgetPasswordActivity"
             android:screenOrientation="portrait" />

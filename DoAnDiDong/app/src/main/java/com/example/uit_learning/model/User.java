@@ -1,16 +1,17 @@
 package com.example.uit_learning.model;
 
 public class User {
-    public String name, email, image, cover;
+    public String name, email, image, cover, uid;
 
     public User() {
     }
 
-    public User(String name, String email, String image, String cover) {
+    public User(String name, String email, String image, String cover, String uid) {
         this.name = name;
         this.email = email;
         this.image = image;
         this.cover = cover;
+        this.uid = uid;
     }
 
     public String getName() {
@@ -43,5 +44,13 @@ public class User {
 
     public void setCover(String cover) {
         this.cover = cover;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

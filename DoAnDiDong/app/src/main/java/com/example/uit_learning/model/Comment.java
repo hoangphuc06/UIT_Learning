@@ -1,19 +1,26 @@
 package com.example.uit_learning.model;
 
 public class Comment {
-    String cId, comment, timestamp, uid, uEmail, uDp, uName;
+    String pId, cId, comment, timestamp, uid, uEmail;
 
     public Comment() {
     }
 
-    public Comment(String cId, String comment, String timestamp, String uid, String uEmail, String uDp, String uName) {
+    public Comment(String pId, String cId, String comment, String timestamp, String uid, String uEmail) {
+        this.pId = pId;
         this.cId = cId;
         this.comment = comment;
         this.timestamp = timestamp;
         this.uid = uid;
         this.uEmail = uEmail;
-        this.uDp = uDp;
-        this.uName = uName;
+    }
+
+    public String getpId() {
+        return pId;
+    }
+
+    public void setpId(String pId) {
+        this.pId = pId;
     }
 
     public String getcId() {
@@ -56,19 +63,4 @@ public class Comment {
         this.uEmail = uEmail;
     }
 
-    public String getuDp() {
-        return uDp;
-    }
-
-    public void setuDp(String uDp) {
-        this.uDp = uDp;
-    }
-
-    public String getuName() {
-        return uName;
-    }
-
-    public void setuName(String uName) {
-        this.uName = uName;
-    }
 }

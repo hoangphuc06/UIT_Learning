@@ -3,30 +3,15 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Date;
-
-import meow.bottomnavigation.MeowBottomNavigation;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -110,9 +95,9 @@ public class DashboardActivity extends AppCompatActivity {
 //                        ft2.addToBackStack(null);
                         ft2.commit();
                         return true;
-                    case R.id.nav_profile:
-                        textToolbar.setText("Profile");
-                        ProfileFragment fragment3 = new ProfileFragment();
+                    case R.id.nav_settings:
+                        textToolbar.setText("Settings");
+                        SettingsFragment fragment3 = new SettingsFragment();
                         FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
                         ft3.replace(R.id.container,fragment3,"");
 //                        ft3.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,R.anim.slide_in_left,R.anim.slide_out_right);

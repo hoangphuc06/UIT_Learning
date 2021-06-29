@@ -16,9 +16,9 @@
       />
 
     <item
-        android:id="@+id/nav_profile"
-        android:title="Profile"
-        android:icon="@drawable/ic_baseline_account_circle"
+        android:id="@+id/nav_settings"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"
       />
 
 </menu>

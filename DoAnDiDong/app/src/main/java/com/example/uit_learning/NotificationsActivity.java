@@ -63,6 +63,7 @@ public class NotificationsActivity extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
 
+
         notificationsRv.setLayoutManager(layoutManager);
 
         getAllNotification();

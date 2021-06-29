@@ -1,20 +1,18 @@
 package com.example.uit_learning.model;
 
 public class Notification {
-    String pId, timestamp, pUid, notification, sUid, sName, sEmail, sImage;
+    String pId, timestamp, pUid, notification, sUid, sEmail;
 
     public Notification() {
     }
 
-    public Notification(String pId, String timestamp, String pUid, String notification, String sUid, String sName, String sEmail, String sImage) {
+    public Notification(String pId, String timestamp, String pUid, String notification, String sUid, String sEmail) {
         this.pId = pId;
         this.timestamp = timestamp;
         this.pUid = pUid;
         this.notification = notification;
         this.sUid = sUid;
-        this.sName = sName;
         this.sEmail = sEmail;
-        this.sImage = sImage;
     }
 
     public String getpId() {
@@ -57,14 +55,6 @@ public class Notification {
         this.sUid = sUid;
     }
 
-    public String getsName() {
-        return sName;
-    }
-
-    public void setsName(String sName) {
-        this.sName = sName;
-    }
-
     public String getsEmail() {
         return sEmail;
     }
@@ -73,11 +63,4 @@ public class Notification {
         this.sEmail = sEmail;
     }
 
-    public String getsImage() {
-        return sImage;
-    }
-
-    public void setsImage(String sImage) {
-        this.sImage = sImage;
-    }
 }

@@ -96,7 +96,7 @@ public class PostDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textToolbar = findViewById(R.id.textTollbar);
-        textToolbar.setText("Post detail");
+
 
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
@@ -182,6 +182,43 @@ public class PostDetailActivity extends AppCompatActivity {
                 });
             }
         });
+
+        uNameTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Posts");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child(postId).exists())
+                        {
+                            if (hisUid.equals(myUid))
+                            {
+                                Intent intent = new Intent(PostDetailActivity.this, MyProfileActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                            }
+                            else
+                            {
+                                Intent intent = new Intent(PostDetailActivity.this, ThereProfileActivity.class);
+                                intent.putExtra("uid",hisUid);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(PostDetailActivity.this,"Post not exist",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
     }
 
     private void addToHisNotifications (String hisUid, String pId, String notification) {
@@ -235,7 +272,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     commentList.add(comment);
 
-                    adapterComments = new AdapterComments(getApplicationContext(), commentList, myUid, postId);
+                    adapterComments = new AdapterComments(PostDetailActivity.this, commentList, myUid, postId);
 
                     recyclerView.setAdapter(adapterComments);
                 }
@@ -483,9 +520,8 @@ public class PostDetailActivity extends AppCompatActivity {
                     hashMap.put("comment",comment);
                     hashMap.put("timestamp",timeStamp);
                     hashMap.put("uid",myUid);
-                    hashMap.put("uEmail",myName);
-                    hashMap.put("uDp",myDp);
-                    hashMap.put("uName",myName);
+                    hashMap.put("uEmail",myEmail);
+                    hashMap.put("pId",postId);
 
                     ref.child(timeStamp).setValue(hashMap)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -554,10 +590,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     try {
                         Picasso.get().load(myDp).placeholder(R.drawable.ic_image_default).into(cAvatarIv);
                     }
-                    catch (Exception e)
-                    {
-                        //Picasso.get().load(R.drawable.ic_image_default).into(cAvatarIv);
-                    }
+                    catch (Exception e) { }
                 }
             }
 
@@ -581,23 +614,21 @@ public class PostDetailActivity extends AppCompatActivity {
                     pLikes = "" + ds.child("pLikes").getValue();
                     String pTimeStamp = "" + ds.child("pTime").getValue();
                     pImage = "" + ds.child("pImage").getValue();
-                    hisDp = "" + ds.child("uDp").getValue();
                     hisUid = "" + ds.child("uid").getValue();
                     String uEmail = "" + ds.child("uEmail").getValue();
-                    hisName = "" + ds.child("uName").getValue();
                     String commentCount = "" + ds.child("pComments").getValue();
 
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
                     calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
                     String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
 
-                    pTitleTv.setText(pTitle);
+                    pTitleTv.setText("Topic: " + pTitle);
                     pDescriptionTv.setText(pDescr);
                     pLikesTv.setText(pLikes + " Likes");
                     pTimeTv.setText(pTime);
                     pCommentsTv.setText(commentCount + " Comments");
+                    textToolbar.setText("Id: " + postId);
 
-                    uNameTv.setText(hisName);
 
                     if (pImage.equals("noImage"))
                     {
@@ -616,13 +647,26 @@ public class PostDetailActivity extends AppCompatActivity {
                         }
                     }
 
-                    try {
-                        Picasso.get().load(hisDp).placeholder(R.drawable.ic_image_default).into(uPictureIv);
-                    }
-                    catch (Exception e)
-                    {
-                        //Picasso.get().load(R.drawable.ic_image_default).into(uPictureIv);
-                    }
+                    //Load hinh + ten
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(hisUid);
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            hisDp = snapshot.child("image").getValue(String.class);
+                            try {
+                                Picasso.get().load(hisDp).placeholder(R.drawable.ic_image_default).into(uPictureIv);
+                            }
+                            catch (Exception e) { }
+
+                            hisName = snapshot.child("name").getValue(String.class);
+                            uNameTv.setText(hisName);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
 

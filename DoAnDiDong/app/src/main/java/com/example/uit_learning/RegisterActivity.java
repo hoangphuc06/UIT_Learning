@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             if (!password.equals(conpassword))
             {
-                textConPassword.setError("Confirmation password does not match");
+                textConPassword.setError("Confirm password does not match");
                 textConPassword.setFocusable(true);
                 textConPassword.setErrorIconDrawable(null);
                 return;

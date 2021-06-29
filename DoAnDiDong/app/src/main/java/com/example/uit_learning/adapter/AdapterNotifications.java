@@ -63,9 +63,7 @@ public class AdapterNotifications extends RecyclerView.Adapter<AdapterNotificati
     public void onBindViewHolder(@NonNull HolderNotification holder, int position) {
         Notification model = notificationList.get(position);
 
-        String name = model.getsName();
         String notification = model.getNotification();
-        String image = model.getsImage();
         String timestamp = model.getTimestamp();
         String senderUid = model.getsUid();
         String pId = model.getpId();
