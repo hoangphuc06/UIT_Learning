@@ -3,11 +3,15 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +34,8 @@ import java.net.URLEncoder;
 public class ViewPDFActivity extends AppCompatActivity {
 
     FloatingActionButton btn_flt;
+    BroadcastReceiver broadcastReceiver = null;
+    SwipeRefreshLayout refresh;
     WebView pdfview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +44,18 @@ public class ViewPDFActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         btn_flt=findViewById(R.id.flt_btn);
+
+        refresh = findViewById(R.id.refresh);
 
         pdfview=(WebView)findViewById(R.id.viewpdf);
         pdfview.getSettings().setJavaScriptEnabled(true);
         pdfview.setWebViewClient(new Callback());
         pdfview.getSettings().setBuiltInZoomControls(true);
+        pdfview.getSettings().setDisplayZoomControls(false);
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
@@ -156,5 +168,14 @@ public class ViewPDFActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 }

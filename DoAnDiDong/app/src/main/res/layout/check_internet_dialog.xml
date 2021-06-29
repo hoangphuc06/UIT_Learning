@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_baseline_wifi_off_24"
+        android:layout_gravity="center"
+        app:tint="@color/main" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OPPS!"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textColor="@color/main"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Không thể kết nối với server"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/main"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kiểm tra lại kết nối internet"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/main"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnRetry"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Retry"
+        android:textColor="@color/white"
+        android:layout_margin="50dp"
+        android:textAllCaps="true"
+        android:background="@drawable/round_border"
+        />
+
+</LinearLayout>
