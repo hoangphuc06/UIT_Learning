@@ -219,6 +219,15 @@ public class PostDetailActivity extends AppCompatActivity {
                 });
             }
         });
+
+        pImageIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PostDetailActivity.this, ViewImageActivity.class);
+                intent.putExtra("pImage",pImage);
+                startActivity(intent);
+            }
+        });
     }
 
     private void addToHisNotifications (String hisUid, String pId, String notification) {
