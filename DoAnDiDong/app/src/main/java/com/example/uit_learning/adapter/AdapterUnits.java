@@ -1,10 +1,12 @@
 package com.example.uit_learning.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,22 +24,35 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myviewholder>{
+import java.util.List;
+
+public class AdapterUnits extends RecyclerView.Adapter<AdapterUnits.myviewholder>{
 
 
-    public AdapterUnits(@NonNull FirebaseRecyclerOptions<Unit> options) {
-        super(options);
+    Context context;
+    List<Unit> unitList;
+
+    public AdapterUnits(Context context, List<Unit> unitList) {
+        this.context = context;
+        this.unitList = unitList;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull  AdapterUnits.myviewholder holder, int position, @NonNull Unit model) {
-        holder.header.setText(model.getFilename());
+    public myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_unit,parent,false);
+        return new myviewholder(view);
+    }
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(model.getTypeUnit()).child(model.getIdUnit()).child(model.getId());
+
+    @Override
+    public void onBindViewHolder(@NonNull myviewholder holder, int position) {
+        holder.header.setText(unitList.get(position).getFilename());
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(unitList.get(position).getIdUnit());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                if (snapshot.hasChild(unitList.get(position).getId()))
                 {
                     holder.status.setText("Completed");
                     holder.iconStatus.setImageResource(R.drawable.ic_check_completed);
@@ -54,21 +69,21 @@ public class AdapterUnits extends FirebaseRecyclerAdapter<Unit,AdapterUnits.myvi
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(holder.itemView.getContext(), ViewPDFActivity.class);
-                intent.putExtra("filename",model.getFilename());
-                intent.putExtra("fileurl",model.getFileurl());
-                intent.putExtra("id",model.getId());
-                intent.putExtra("idUnit",model.getIdUnit());
-                intent.putExtra("typeUnit",model.getTypeUnit());
+                intent.putExtra("filename",unitList.get(position).getFilename());
+                intent.putExtra("fileurl",unitList.get(position).getFileurl());
+                intent.putExtra("id",unitList.get(position).getId());
+                intent.putExtra("idUnit",unitList.get(position).getIdUnit());
+                intent.putExtra("typeUnit",unitList.get(position).getTypeUnit());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 holder.itemView.getContext().startActivity(intent);
             }
         });
     }
 
+
     @Override
-    public myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_unit,parent,false);
-        return new myviewholder(view);
+    public int getItemCount() {
+        return unitList.size();
     }
 
     public class myviewholder extends RecyclerView.ViewHolder

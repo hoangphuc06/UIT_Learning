@@ -226,6 +226,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(PostDetailActivity.this, ViewImageActivity.class);
                 intent.putExtra("pImage",pImage);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
             }
         });
     }

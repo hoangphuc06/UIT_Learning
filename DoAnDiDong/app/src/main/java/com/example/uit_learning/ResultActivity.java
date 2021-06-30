@@ -111,9 +111,9 @@ public class ResultActivity extends AppCompatActivity {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             HashMap<Object,String> hashMap = new HashMap<>();
-            hashMap.put("uid",uid);
+            hashMap.put("maxScorse","completed");
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(typeUnit).child(idUnit).child(id).child(uid);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(uid).child(idUnit).child(id);
             reference.setValue(hashMap);
 
         } else {

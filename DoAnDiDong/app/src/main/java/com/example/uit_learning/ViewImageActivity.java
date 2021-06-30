@@ -3,6 +3,7 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -27,10 +30,10 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.zip.Inflater;
 
 public class ViewImageActivity extends AppCompatActivity {
 
-    ImageView download;
     PhotoView imageView;
     String pImage;
     LinearLayout top,bottom;
@@ -38,14 +41,24 @@ public class ViewImageActivity extends AppCompatActivity {
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
     Bitmap bitmap;
 
+    Toolbar toolbar;
+    TextView textToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
 
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
+        textToolbar.setText("Image");
+
         imageView=findViewById(R.id.Image);
-        download=findViewById(R.id.download);
         top=findViewById(R.id.top);
         bottom=findViewById(R.id.bottom);
 
@@ -64,30 +77,17 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(check)
                 {
-                    download.setVisibility(View.GONE);
+                    //download.setVisibility(View.GONE);
                     check=false;
                 }
                 else
                 {
-                    download.setVisibility(View.VISIBLE);
+                    //download.setVisibility(View.VISIBLE);
                     check=true;
                 }
             }
         });
 
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                        String[] permisson = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                        requestPermissions(permisson, WRITE_EXTERNAL_STORAGE_CODE);
-                    } else {
-                        saveImage();
-                    }
-                }
-            }
-        });
 
     }
 
@@ -132,5 +132,39 @@ public class ViewImageActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_download_image,menu);
 
+        MenuItem item = menu.findItem(R.id.action_download);
+
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        String[] permisson = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permisson, WRITE_EXTERNAL_STORAGE_CODE);
+                    } else {
+                        saveImage();
+                    }
+                }
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
 }

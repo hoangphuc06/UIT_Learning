@@ -8,12 +8,90 @@
     android:background="#F1EDED"
     android:orientation="vertical">
 
-
-
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/row_unit"
-        android:id="@+id/recview"/>
+        android:layout_height="?actionBarSize"
+        android:id="@+id/toolbar"
+        android:elevation="0dp"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorControlNormal"
+                android:text="Title"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:id="@+id/textTollbar"/>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical">
+
+           <androidx.cardview.widget.CardView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/white"
+               android:layout_margin="8dp">
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:background="@color/white"
+                   android:orientation="vertical">
+
+                   <TextView
+                       android:id="@+id/totalUnitTv"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Total number of lessons: 0"
+                       android:textColor="@color/black"
+                       android:layout_margin="8dp"
+                       android:textSize="16sp"/>
+
+                   <TextView
+                       android:id="@+id/completedUnitTv"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_margin="8dp"
+                       android:text="Number of lessons completed: 0"
+                       android:textColor="@color/black"
+                       android:textSize="16sp"/>
+
+                   <androidx.core.widget.ContentLoadingProgressBar
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_margin="8dp"
+                       android:progressDrawable="@drawable/custom_progressbar"
+                       style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                       android:id="@+id/progress_bar" />
+
+               </LinearLayout>
+
+           </androidx.cardview.widget.CardView>
+
+           <androidx.recyclerview.widget.RecyclerView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               tools:listitem="@layout/row_unit"
+               android:id="@+id/recview"/>
+
+       </LinearLayout>
+
+   </ScrollView>
 
 </LinearLayout>

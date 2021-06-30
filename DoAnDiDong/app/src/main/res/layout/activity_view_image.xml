@@ -34,35 +34,10 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <LinearLayout
-
-        android:id="@+id/top"
-        android:layout_alignParentTop="true"
-        android:background="@color/black"
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_gravity="center"
+        android:id="@+id/Image"
         android:layout_width="match_parent"
-        android:gravity="right"
-        android:layout_height="@dimen/_25sdp">
-        <ImageView
-            android:id="@+id/download"
-            android:layout_margin="@dimen/_5sdp"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"
-            android:src="@drawable/ic_baseline_arrow_circle_down_white_24"
-            android:layout_gravity="right"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/top"
-        android:layout_above="@id/bottom">
-        <com.github.chrisbanes.photoview.PhotoView
-            android:layout_gravity="center"
-            android:id="@+id/Image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
-
-
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
