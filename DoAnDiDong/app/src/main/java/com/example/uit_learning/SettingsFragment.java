@@ -166,9 +166,11 @@ public class SettingsFragment extends Fragment {
 
         notificationSwitch = view.findViewById(R.id.notification_switch);
         preferences = getContext().getApplicationContext().getSharedPreferences("NOTIFICATION_PREFS", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("NOTIFICATION_ENABLE", false);
-        editor.commit();
+        if(!preferences.contains("NOTIFICATION_ENABLE")) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("NOTIFICATION_ENABLE", true);
+        }
+        notificationSwitch.setChecked(preferences.getBoolean("NOTIFICATION_ENABLE", true));
 
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

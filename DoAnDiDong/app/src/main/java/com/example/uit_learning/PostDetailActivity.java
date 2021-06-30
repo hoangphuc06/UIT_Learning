@@ -92,7 +92,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private ClipboardManager myClipboard;
     private ClipData myClip;
 
-    private void sendNotification(String title, String message, String token) {
+    private void sendNotification(String title, String message, String postId, String token) {
         try {
             RequestQueue queue = Volley.newRequestQueue(PostDetailActivity.this);
 
@@ -101,6 +101,7 @@ public class PostDetailActivity extends AppCompatActivity {
             JSONObject data = new JSONObject();
             data.put("title", title);
             data.put("body", message);
+            data.put("postId", postId);
             JSONObject notification_data = new JSONObject();
             notification_data.put("data", data);
             notification_data.put("to", token);
@@ -530,7 +531,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             String token = snapshot.getValue(String.class);
-                                            sendNotification("UIT Learning", myName + " đã thích bài post của bạn", token);
+                                            sendNotification("UIT Learning", myName + " liked your post " + postId, postId, token);
                                         }
 
                                         @Override
