@@ -2,22 +2,23 @@ package com.example.uit_learning;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,7 +27,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -47,6 +47,8 @@ public class SettingsFragment extends Fragment {
 
     RecyclerView recyclerView;
 
+    Switch notificationSwitch;
+    SharedPreferences preferences;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -159,6 +161,25 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().startActivity(new Intent(getActivity(),ChangePasswordActivity.class));
                 getActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+            }
+        });
+
+        notificationSwitch = view.findViewById(R.id.notification_switch);
+        preferences = getContext().getApplicationContext().getSharedPreferences("NOTIFICATION_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("NOTIFICATION_ENABLE", false);
+        editor.commit();
+
+        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = preferences.edit();
+                if (isChecked) {
+                    editor.putBoolean("NOTIFICATION_ENABLE", true);
+                } else {
+                    editor.putBoolean("NOTIFICATION_ENABLE", false);
+                }
+                editor.commit();
             }
         });
 
