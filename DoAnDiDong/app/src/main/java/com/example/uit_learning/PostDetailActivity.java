@@ -526,7 +526,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                     mProcessLike = false;
 
                                     addToHisNotifications(""+hisUid,""+postId,"Liked your post");
-                                    FirebaseDatabase.getInstance().getReference("Tokens").child(myUid).addValueEventListener(new ValueEventListener() {
+                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             String token = snapshot.getValue(String.class);

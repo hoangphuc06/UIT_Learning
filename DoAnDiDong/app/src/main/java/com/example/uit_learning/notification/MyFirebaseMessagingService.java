@@ -25,7 +25,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String message = remoteMessage.getData().get("body");
 
         preferences = getSharedPreferences("NOTIFICATION_PREFS", MODE_PRIVATE);
-        if(preferences.getBoolean("NOTIFICATION_ENABLE", true)) {
+        if(preferences.getBoolean("NOTIFICATION_ENABLE", false)) {
             createNotificationChannel();
             Notification notification = new NotificationCompat.Builder(getApplicationContext(), "Learning")
                     .setContentTitle(title)
