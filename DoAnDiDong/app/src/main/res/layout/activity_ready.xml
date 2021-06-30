@@ -1,14 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".ReadyActivity">
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/btn_DoExercises"
 
-    />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:id="@+id/toolbar"
+        android:elevation="0dp"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorControlNormal"
+                android:text="Title"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:id="@+id/textTollbar"/>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical">
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Are you ready?"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_margin="8dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You will take a test and will be recognized as complete when you get 80% of the questions correct."
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick the time to start: "
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp">
+
+            <RadioButton
+                android:id="@+id/mins10Rbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="10 mins"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/mins15Rbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="15 mins (recommend)"
+                android:textColor="@color/black"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/mins20Rbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="20 mins"
+                android:textColor="@color/black"/>
+
+        </RadioGroup>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Let's go"
+            android:layout_margin="16dp"
+            style="@style/ButtonMain"
+            android:id="@+id/btn_DoExercises"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
