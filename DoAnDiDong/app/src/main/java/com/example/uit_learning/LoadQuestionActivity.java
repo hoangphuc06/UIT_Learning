@@ -1,8 +1,10 @@
 package com.example.uit_learning;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -22,6 +24,7 @@ import java.util.List;
 
 public class LoadQuestionActivity extends AppCompatActivity {
 
+    private static final int CODE_GET_RESULT = 9999;
 
     DatabaseReference databaseReference;
 
@@ -64,8 +67,8 @@ public class LoadQuestionActivity extends AppCompatActivity {
                 intent.putExtra("idUnit",idUnit);
                 intent.putExtra("typeUnit",typeUnit);
                 intent.putExtra("id",id);
-                startActivity(intent);
-                finish();
+                startActivityForResult(intent,CODE_GET_RESULT);
+                //finish();
 
             }
 
@@ -75,7 +78,6 @@ public class LoadQuestionActivity extends AppCompatActivity {
             }
         });
 
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -84,5 +86,17 @@ public class LoadQuestionActivity extends AppCompatActivity {
 
             }
         }, 1500);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CODE_GET_RESULT) {
+            if (resultCode == Activity.RESULT_OK) {
+                Intent returnIntent=new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
+            }
+        }
     }
 }

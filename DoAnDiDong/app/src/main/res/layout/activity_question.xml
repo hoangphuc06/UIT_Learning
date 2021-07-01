@@ -6,55 +6,77 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".QuestionActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:id="@+id/toolbar"
+        android:elevation="0dp"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorControlNormal"
+                android:text="Title"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:id="@+id/textTollbar"/>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
+        android:layout_below="@+id/toolbar"
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <RelativeLayout
             android:id="@+id/rlt"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="60dp">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:id="@+id/grid_answer"
-                >
+                android:layout_marginLeft="16dp"
+                android:id="@+id/grid_answer"/>
 
-            </androidx.recyclerview.widget.RecyclerView>
-
-            <TextView
-                android:id="@+id/txt_question_cout"
-                android:layout_marginLeft="8dp"
-                android:layout_toRightOf="@+id/grid_answer"
-                android:text="0/30"
-                android:layout_centerVertical="true"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/txt_timer"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="8dp"
+                android:layout_marginRight="16dp"
                 android:text="20:00"
                 android:layout_centerVertical="true"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@+id/txt_timer"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_time_black"/>
 
         </RelativeLayout>
         <LinearLayout
             android:layout_margin="16dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <FrameLayout
                 android:id="@+id/layout_image"
@@ -88,6 +110,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/ckbA"
                 android:text="Answer A"
+                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
@@ -95,6 +118,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/ckbB"
                 android:text="Answer B"
+                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
@@ -102,6 +126,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/ckbC"
                 android:text="Answer C"
+                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
@@ -109,6 +134,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/ckbD"
                 android:text="Answer D"
+                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></CheckBox>
 
@@ -118,24 +144,28 @@
     <RelativeLayout
         android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Button
-            android:layout_margin="@dimen/_10sdp"
+
+        <ImageButton
             android:id="@+id/bt_pre"
-            android:backgroundTint="@color/teal_700"
-            android:drawableRight="@drawable/ic_baseline_navigate_before_24"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_40sdp"/>
-        <Button
-            android:layout_margin="@dimen/_10sdp"
-            android:layout_alignParentRight="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/ic_pre_question_white"
+            android:background="@drawable/bacground_next_pre_question"/>
+
+        <ImageButton
             android:id="@+id/bt_next"
-            android:backgroundTint="@color/teal_700"
-            android:drawableLeft="@drawable/ic_baseline_navigate_next_24"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_40sdp"/>
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ic_next_question_white"
+            android:background="@drawable/bacground_next_pre_question"/>
 
     </RelativeLayout>
 
