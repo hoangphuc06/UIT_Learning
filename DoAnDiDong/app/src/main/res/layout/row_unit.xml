@@ -38,6 +38,7 @@
                android:layout_height="wrap_content"
                android:textSize="18dp"
                android:text="Name"
+               android:textStyle="bold"
                android:textColor="@color/black"/>
 
            <TextView
@@ -47,6 +48,16 @@
                android:textSize="14dp"
                android:text="Not completed"
                android:textColor="@color/black"/>
+
+           <TextView
+               android:id="@+id/score"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="14dp"
+               android:text="Max score: 0/0"
+               android:textColor="@color/black"/>
+
+
 
        </LinearLayout>
 

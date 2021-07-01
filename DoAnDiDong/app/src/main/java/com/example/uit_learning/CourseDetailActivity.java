@@ -130,7 +130,10 @@ public class CourseDetailActivity extends AppCompatActivity {
                 int count = 0;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
-                    count++;
+                    if (dataSnapshot.child("completed").getValue(String.class).equals("true"))
+                    {
+                        count++;
+                    }
                 }
                 progressBar.setProgress(count);
                 completedUnitTv.setText("Number of lessons completed: " + count);
@@ -155,7 +158,8 @@ public class CourseDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }

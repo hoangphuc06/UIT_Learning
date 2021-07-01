@@ -521,8 +521,10 @@ public class QuestionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        Intent returnIntent=new Intent();
+        setResult(Activity.RESULT_OK,returnIntent);
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
     }
 
 }

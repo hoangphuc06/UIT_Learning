@@ -2,6 +2,7 @@ package com.example.uit_learning.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class AdapterUnits extends RecyclerView.Adapter<AdapterUnits.myviewholder>{
 
@@ -48,15 +50,64 @@ public class AdapterUnits extends RecyclerView.Adapter<AdapterUnits.myviewholder
     public void onBindViewHolder(@NonNull myviewholder holder, int position) {
         holder.header.setText(unitList.get(position).getFilename());
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(unitList.get(position).getIdUnit());
+        String idUnit = unitList.get(position).getIdUnit();
+        String typeUnit = unitList.get(position).getTypeUnit();
+        String id = unitList.get(position).getId();
+
+        int ammountQues;
+
+
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(idUnit).child(id);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(unitList.get(position).getId()))
+
+                String completed = "" + snapshot.child("completed").getValue();
+
+                if (completed.equals("true"))
                 {
                     holder.status.setText("Completed");
                     holder.iconStatus.setImageResource(R.drawable.ic_check_completed);
                 }
+
+                String score = null;
+                boolean check = false;
+                if (snapshot.hasChild("maxScorse"))
+                {
+                    score = snapshot.child("maxScorse").getValue(String.class);
+                    check = true;
+                }
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id).child("Question");
+                final boolean Check = check;
+                final String sco = score;
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int count = 0;
+                        for (DataSnapshot ds : snapshot.getChildren())
+                        {
+                            count++;
+                        }
+
+                        if (Check == false)
+                        {
+
+
+                            holder.score.setText("Max score: 0/" + count);
+                        }
+                        else
+                        {
+                            holder.score.setText("Max score: " + sco + "/" + count);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
 
             @Override
@@ -88,7 +139,7 @@ public class AdapterUnits extends RecyclerView.Adapter<AdapterUnits.myviewholder
 
     public class myviewholder extends RecyclerView.ViewHolder
     {
-        TextView header, status;
+        TextView header, status, score;
         ImageView iconStatus;
         View itemView;
 
@@ -98,6 +149,7 @@ public class AdapterUnits extends RecyclerView.Adapter<AdapterUnits.myviewholder
             header = itemView.findViewById(R.id.header);
             status = itemView.findViewById(R.id.status);
             iconStatus = itemView.findViewById(R.id.iconStatus);
+            score = itemView.findViewById(R.id.score);
         }
     }
 }

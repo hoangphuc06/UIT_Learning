@@ -116,4 +116,12 @@ public class LoadQuestionActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent returnIntent=new Intent();
+        setResult(Activity.RESULT_OK,returnIntent);
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 }

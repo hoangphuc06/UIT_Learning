@@ -2,6 +2,7 @@ package com.example.uit_learning;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.uit_learning.Common.Common;
 import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.Common.SpaceDecoration;
@@ -40,13 +42,17 @@ public class ResultActivity extends AppCompatActivity {
 
     BroadcastReceiver broadcastReceiver = null;
 
-    TextView txt_timer,txt_result,txt_right_answer;
+    TextView txt_timer,txt_result,txt_right_answer, txt_maxScorse;
     Button btn_filter_total,btn_filter_right_answer,btn_filter_wrong_answer,btn_filter_no_answer;
     RecyclerView recycler_result;
+    LottieAnimationView lottieAnimationView;
 
     String id, idUnit, typeUnit;
 
     ResultGridAdapter adapter,filtered_adapter;
+
+    Toolbar toolbar;
+    TextView textToolbar;
 
     BroadcastReceiver backToQuestion=new BroadcastReceiver() {
         @Override
@@ -69,6 +75,14 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
+
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
 
@@ -82,10 +96,12 @@ public class ResultActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(backToQuestion,new IntentFilter(Common.KEY_BACK_FROM_RESULT));
 
+        lottieAnimationView = findViewById(R.id.lottieView);
 
         txt_result = (TextView) findViewById(R.id.txt_result);
         txt_timer = (TextView) findViewById(R.id.txt_time);
         txt_right_answer = (TextView) findViewById(R.id.txt_right_answer);
+        txt_maxScorse = findViewById(R.id.txt_maxScorse);
 
         btn_filter_no_answer = (Button) findViewById(R.id.btn_filter_no_answer);
         btn_filter_right_answer = (Button) findViewById(R.id.btn_filter_right_answer);
@@ -111,20 +127,110 @@ public class ResultActivity extends AppCompatActivity {
         btn_filter_wrong_answer.setText(new StringBuilder("").append(Common.wrong_answer_cout));
         btn_filter_no_answer.setText(new StringBuilder("").append(Common.no_answer_cout));
 
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         int percent = (Common.right_answer_cout * 100 / Common.list.size());
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(uid).child(idUnit).child(id);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild("maxScorse"))
+                {
+                    String maxScorse = "" + snapshot.child("maxScorse").getValue();
+                    int maxScorseInt = Integer.parseInt(maxScorse);
+                    if (maxScorseInt > Common.right_answer_cout)
+                    {
+                        txt_maxScorse.setText("Max scorse: " + maxScorse + "/" + Common.listanswer.size());
+                    }
+                    else
+                    {
+                        txt_maxScorse.setText("Max scorse: " + Common.right_answer_cout + "/" + Common.listanswer.size());
+                    }
+                }
+                else
+                {
+                    txt_maxScorse.setText("Max scorse: " + Common.right_answer_cout + "/" + Common.listanswer.size());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         if (percent > 80) {
-            txt_result.setText("EXCELLENT");
+            txt_result.setText("Congratulations,\nyou pass the test.");
+            lottieAnimationView.setAnimation(R.raw.smile);
 
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference refCompleted = FirebaseDatabase.getInstance().getReference("IsCompleted").child(uid).child(idUnit).child(id);
+            refCompleted.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.hasChild("maxScorse"))
+                    {
+                        String maxScorse = "" + snapshot.child("maxScorse").getValue();
+                        int maxScorseInt = Integer.parseInt(maxScorse);
+                        if (maxScorseInt < Common.right_answer_cout)
+                        {
+                            HashMap<Object,String> hashMap = new HashMap<>();
+                            hashMap.put("maxScorse",String.valueOf(Common.right_answer_cout));
+                            hashMap.put("completed","true");
+                            refCompleted.setValue(hashMap);
+                        }
+                    }
+                    else
+                    {
+                        HashMap<Object,String> hashMap = new HashMap<>();
+                        hashMap.put("maxScorse",String.valueOf(Common.right_answer_cout));
+                        hashMap.put("completed","true");
+                        refCompleted.setValue(hashMap);
+                    }
+                }
 
-            HashMap<Object,String> hashMap = new HashMap<>();
-            hashMap.put("maxScorse","completed");
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("IsCompleted").child(uid).child(idUnit).child(id);
-            reference.setValue(hashMap);
+                }
+            });
+
+
 
         } else {
-            txt_result.setText("GÀ");
+            txt_result.setText("You don't pass the test,\nplease try again.");
+            lottieAnimationView.setAnimation(R.raw.cry);
+
+            DatabaseReference refCompleted = FirebaseDatabase.getInstance().getReference("IsCompleted").child(uid).child(idUnit).child(id);
+            refCompleted.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.hasChild("maxScorse"))
+                    {
+                        String maxScorse = "" + snapshot.child("maxScorse").getValue();
+                        int maxScorseInt = Integer.parseInt(maxScorse);
+                        if (maxScorseInt < Common.right_answer_cout)
+                        {
+                            HashMap<Object,String> hashMap = new HashMap<>();
+                            hashMap.put("maxScorse",String.valueOf(Common.right_answer_cout));
+                            hashMap.put("completed","false");
+                            refCompleted.setValue(hashMap);
+                        }
+                    }
+                    else
+                    {
+                        HashMap<Object,String> hashMap = new HashMap<>();
+                        hashMap.put("maxScorse",String.valueOf(Common.right_answer_cout));
+                        hashMap.put("completed","false");
+                        refCompleted.setValue(hashMap);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
 
         btn_filter_total.setOnClickListener(new View.OnClickListener() {
