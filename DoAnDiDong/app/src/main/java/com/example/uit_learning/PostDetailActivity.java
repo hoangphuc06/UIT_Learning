@@ -10,10 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,6 +34,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AdapterComments;
 import com.example.uit_learning.model.Comment;
 import com.example.uit_learning.model.Post;
@@ -56,6 +60,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     String hisUid, myUid, myEmail, myName, myDp, postId, pLikes, hisDp, hisName, pImage, pTitle, pDescr;
 
@@ -88,6 +94,9 @@ public class PostDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -698,4 +707,13 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

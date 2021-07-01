@@ -7,12 +7,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AdapterUnits;
 import com.example.uit_learning.model.Course;
 import com.example.uit_learning.model.Unit;
@@ -30,6 +34,9 @@ import java.util.List;
 public class CourseDetailActivity extends AppCompatActivity {
 
     TextView totalUnitTv, completedUnitTv;
+    BroadcastReceiver broadcastReceiver = null;
+
+    TextView titleCourseTv;
     RecyclerView recview;
     AdapterUnits adapter;
     List<Unit> unitList;
@@ -48,6 +55,8 @@ public class CourseDetailActivity extends AppCompatActivity {
 //        ActionBar actionBar = getSupportActionBar();
 //        actionBar.setDisplayShowHomeEnabled(true);
 //        actionBar.setDisplayHomeAsUpEnabled(true);
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -147,5 +156,18 @@ public class CourseDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 }

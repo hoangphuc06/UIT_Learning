@@ -3,12 +3,16 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 
 import com.example.uit_learning.Common.Common;
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.model.CurrentQuestion;
 import com.example.uit_learning.model.Question;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +26,7 @@ import java.util.List;
 
 public class LoadQuestionActivity extends AppCompatActivity {
 
+    BroadcastReceiver broadcastReceiver = null;
 
     DatabaseReference databaseReference;
 
@@ -29,6 +34,9 @@ public class LoadQuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load_question);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         Intent intent=getIntent();
         String id=intent.getStringExtra("id");
@@ -85,4 +93,13 @@ public class LoadQuestionActivity extends AppCompatActivity {
             }
         }, 1500);
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

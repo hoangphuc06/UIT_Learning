@@ -3,7 +3,10 @@ package com.example.uit_learning;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
@@ -12,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
@@ -59,4 +63,5 @@ public class MainActivity extends AppCompatActivity {
             }
         },SPLASH_SCREEEN);
     }
+
 }

@@ -6,9 +6,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uit_learning.Common.Common;
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AnswerSheetAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -30,6 +34,8 @@ import com.squareup.picasso.Picasso;
 import java.util.concurrent.TimeUnit;
 
 public class ViewResultActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     Button bt_next,bt_pre;
     TextView answer;
@@ -48,6 +54,9 @@ public class ViewResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_result);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         Intent intent=getIntent();
         boolean check=intent.getBooleanExtra("check",false);
@@ -335,4 +344,13 @@ public class ViewResultActivity extends AppCompatActivity {
         ckbC.setChecked(false);
         ckbD.setChecked(false);
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

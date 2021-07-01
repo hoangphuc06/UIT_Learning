@@ -5,15 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class DashboardActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     FirebaseAuth firebaseAuth;
     BottomNavigationView bottomNavigationView;
@@ -56,6 +62,9 @@ public class DashboardActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setTitle("Home");
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         textToolbar = findViewById(R.id.textTollbar);
 
@@ -117,6 +126,15 @@ public class DashboardActivity extends AppCompatActivity {
     public void onResume() {
 
         super.onResume();
+    }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 
 }
