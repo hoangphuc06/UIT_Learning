@@ -241,8 +241,6 @@ public class ResultActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
         dialog.show();
     }
     private void CheckInternet() {
@@ -254,4 +252,10 @@ public class ResultActivity extends AppCompatActivity {
 //        super.onPause();
 //        unregisterReceiver(broadcastReceiver);
 //    }
+    @Override
+    public void onBackPressed() {
+        Intent returnIntent=new Intent();
+        setResult(Activity.RESULT_CANCELED,returnIntent);
+        finish();
+    }
 }

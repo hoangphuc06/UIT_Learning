@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,8 +47,9 @@ public class QuestionActivity extends AppCompatActivity {
     BroadcastReceiver broadcastReceiver = null;
 
     private static final int CODE_GET_RESULT = 9999;
-    Button bt_next,bt_pre,bt_finish;
-    TextView txt_question_text,txt_timer,txt_question_count;
+    Button bt_finish;
+    ImageButton bt_next,bt_pre;
+    TextView txt_question_text,txt_timer;
     CheckBox ckbA,ckbB,ckbC,ckbD;
     FrameLayout layout_image;
     ProgressBar progressBar;
@@ -61,6 +63,8 @@ public class QuestionActivity extends AppCompatActivity {
     String id, idUnit, typeUnit;
 
     Toolbar toolbar;
+    TextView textToolbar;
+
     @Override
     protected void onDestroy() {
         if (Common.countDownTimer != null)
@@ -74,6 +78,13 @@ public class QuestionActivity extends AppCompatActivity {
 
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
 
         Intent intent=getIntent();
         id=intent.getStringExtra("id");
@@ -95,7 +106,6 @@ public class QuestionActivity extends AppCompatActivity {
             answer_sheet_view.setAdapter(answerSheetAdapter);
 
             txt_timer=findViewById(R.id.txt_timer);
-            txt_question_count=findViewById(R.id.txt_question_cout);
             layout_image=(FrameLayout)findViewById(R.id.layout_image);
             progressBar=(ProgressBar)findViewById(R.id.progress_bar);
             txt_question_text=(TextView)findViewById(R.id.txt_question_text);
@@ -204,7 +214,7 @@ public class QuestionActivity extends AppCompatActivity {
 
     public void SetData()
     {
-        txt_question_count.setText(new StringBuilder(String.format("%d",Index+1))
+        textToolbar.setText("Question: " + new StringBuilder(String.format("%d",Index+1))
                 .append("/")
                 .append(String.format("%d",Common.list.size())).toString());
 
@@ -413,7 +423,7 @@ public class QuestionActivity extends AppCompatActivity {
         intent.putExtra("id",id);
         startActivityForResult(intent,CODE_GET_RESULT);
         Common.timer=Common.TOTAL_TIME-time_play;
-        finish();
+        //finish();
     }
 
     public void clearCkb()
@@ -435,7 +445,7 @@ public class QuestionActivity extends AppCompatActivity {
                     Index = 0;
                     time_play = Common.TOTAL_TIME;
                     countTimer();
-                    txt_question_count.setVisibility(View.VISIBLE);
+                    textToolbar.setVisibility(View.VISIBLE);
                     txt_timer.setVisibility(View.VISIBLE);
                     for (int i = 0; i < Common.list.size(); i++) {
                         Common.listanswer.set(i, "null");
@@ -446,7 +456,12 @@ public class QuestionActivity extends AppCompatActivity {
                     SetData();
                 }
             }
-
+            else
+            {
+                Intent returnIntent=new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
+            }
 
         }
     }
@@ -498,4 +513,16 @@ public class QuestionActivity extends AppCompatActivity {
 //        super.onPause();
 //        unregisterReceiver(broadcastReceiver);
 //    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
 }

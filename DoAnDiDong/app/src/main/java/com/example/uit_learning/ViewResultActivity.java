@@ -2,6 +2,7 @@ package com.example.uit_learning;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -38,8 +40,9 @@ public class ViewResultActivity extends AppCompatActivity {
     BroadcastReceiver broadcastReceiver = null;
 
     Button bt_next,bt_pre;
+    ImageButton bt_next,bt_pre;
     TextView answer;
-    TextView txt_question_text,txt_timer,txt_question_count;
+    TextView txt_question_text,txt_timer;
     CheckBox ckbA,ckbB,ckbC,ckbD;
     FrameLayout layout_image;
     ImageView answerImage;
@@ -50,6 +53,9 @@ public class ViewResultActivity extends AppCompatActivity {
     RecyclerView answer_sheet_view;
     AnswerSheetAdapter answerSheetAdapter;
 
+    Toolbar toolbar;
+    TextView textToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +63,13 @@ public class ViewResultActivity extends AppCompatActivity {
 
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
 
         Intent intent=getIntent();
         boolean check=intent.getBooleanExtra("check",false);
@@ -84,7 +97,6 @@ public class ViewResultActivity extends AppCompatActivity {
                     TimeUnit.MILLISECONDS.toMinutes(Common.timer),
                     TimeUnit.MILLISECONDS.toSeconds(Common.timer) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(Common.timer))));
-            txt_question_count=findViewById(R.id.txt_question_cout);
             layout_image=(FrameLayout)findViewById(R.id.layout_image);
             progressBar=(ProgressBar)findViewById(R.id.progress_bar);
             txt_question_text=(TextView)findViewById(R.id.txt_question_text);
@@ -176,7 +188,7 @@ public class ViewResultActivity extends AppCompatActivity {
 
     public void SetData()
     {
-        txt_question_count.setText(new StringBuilder(String.format("%d",Index+1))
+        textToolbar.setText("Question: " + new StringBuilder(String.format("%d",Index+1))
                 .append("/")
                 .append(String.format("%d",Common.list.size())).toString());
 
@@ -353,4 +365,16 @@ public class ViewResultActivity extends AppCompatActivity {
 //        super.onPause();
 //        unregisterReceiver(broadcastReceiver);
 //    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
 }

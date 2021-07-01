@@ -1,8 +1,11 @@
 package com.example.uit_learning;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.BroadcastReceiver;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -11,18 +14,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.example.uit_learning.Common.Common;
+import com.example.uit_learning.model.CurrentQuestion;
 
 import com.example.uit_learning.Common.NetworkChangeListener;
 
 public class ReadyActivity extends AppCompatActivity {
 
     BroadcastReceiver broadcastReceiver = null;
+    private static final int CODE_GET_RESULT = 9999;
 
     Button btn_DoExercises;
 
     RadioButton mins10, mins15, mins20;
+
+    Toolbar toolbar;
+    TextView textToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +39,14 @@ public class ReadyActivity extends AppCompatActivity {
 
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textToolbar = findViewById(R.id.textTollbar);
+        textToolbar.setText("Are you ready?");
 
         Intent intent=getIntent();
         String id=intent.getStringExtra("id");
@@ -80,7 +97,7 @@ public class ReadyActivity extends AppCompatActivity {
                 intent.putExtra("id",id);
                 intent.putExtra("idUnit",idUnit);
                 intent.putExtra("typeUnit",typeUnit);
-                startActivity(intent);
+                startActivityForResult(intent,CODE_GET_RESULT);
             }
         });
     }
@@ -93,4 +110,26 @@ public class ReadyActivity extends AppCompatActivity {
 //        super.onPause();
 //        unregisterReceiver(broadcastReceiver);
 //    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CODE_GET_RESULT) {
+            if (resultCode == Activity.RESULT_OK) {
+                onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
 }
