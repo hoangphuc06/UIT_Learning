@@ -40,9 +40,6 @@
             android:name=".QuestionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoadQuestionActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ViewPDFActivity"
             android:screenOrientation="portrait" />
         <activity

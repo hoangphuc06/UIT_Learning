@@ -1,5 +1,6 @@
 package com.example.uit_learning;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,6 +21,14 @@ import com.example.uit_learning.Common.Common;
 import com.example.uit_learning.model.CurrentQuestion;
 
 import com.example.uit_learning.Common.NetworkChangeListener;
+import com.example.uit_learning.model.Question;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class ReadyActivity extends AppCompatActivity {
 
@@ -93,11 +102,49 @@ public class ReadyActivity extends AppCompatActivity {
         btn_DoExercises.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(ReadyActivity.this,LoadQuestionActivity.class);
-                intent.putExtra("id",id);
-                intent.putExtra("idUnit",idUnit);
-                intent.putExtra("typeUnit",typeUnit);
-                startActivityForResult(intent,CODE_GET_RESULT);
+//                Intent intent=new Intent(ReadyActivity.this,LoadQuestionActivity.class);
+//                intent.putExtra("id",id);
+//                intent.putExtra("idUnit",idUnit);
+//                intent.putExtra("typeUnit",typeUnit);
+//                startActivityForResult(intent,CODE_GET_RESULT);
+//                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                Common.list = new ArrayList<>();
+                Common.listanswer=new ArrayList<>();
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id).child("Question");
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        Common.list.clear();
+                        Common.listanswer.clear();
+                        Common.answerSheetList.clear();
+
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Question question = dataSnapshot.getValue(Question.class);
+                            Common.list.add(question);
+                        }
+
+                        for(int i=0;i<Common.list.size();i++)
+                        {
+                            Common.listanswer.add("null");
+                            Common.answerSheetList.add(new CurrentQuestion(i, Common.ANSWER_TYPE.NO_ANSWER));
+                        }
+                        Intent intent = new Intent(ReadyActivity.this, QuestionActivity.class);
+                        intent.putExtra("idUnit",idUnit);
+                        intent.putExtra("typeUnit",typeUnit);
+                        intent.putExtra("id",id);
+                        startActivityForResult(intent,CODE_GET_RESULT);
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        //finish();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
     }

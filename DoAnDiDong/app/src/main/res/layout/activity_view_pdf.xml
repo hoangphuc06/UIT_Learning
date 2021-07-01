@@ -43,22 +43,11 @@
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
+
     <com.github.barteksc.pdfviewer.PDFView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         android:id="@+id/pdfview"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/flt_btn"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/_25sdp"
-        app:fabSize="normal"
-        android:background="@color/main"
-        android:elevation="@dimen/_5sdp"
-        android:src="@drawable/ic_baseline_assignment_24"
-        />
 </RelativeLayout>
