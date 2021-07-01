@@ -14,8 +14,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.uit_learning.Common.NetworkChangeListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -73,6 +77,14 @@ public class DashboardActivity extends AppCompatActivity {
         FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
         ft1.replace(R.id.container,fragment1,"");
         ft1.commit();
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                String token = task.getResult();
+                FirebaseDatabase.getInstance().getReference("Tokens").child(firebaseAuth.getCurrentUser().getUid()).setValue(token);
+            }
+        });
 
         firebaseAuth = FirebaseAuth.getInstance();
 

@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,10 +32,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uit_learning.Common.NetworkChangeListener;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.uit_learning.adapter.AdapterComments;
 import com.example.uit_learning.model.Comment;
 import com.example.uit_learning.model.Post;
@@ -53,11 +60,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class PostDetailActivity extends AppCompatActivity {
 
@@ -81,6 +92,9 @@ public class PostDetailActivity extends AppCompatActivity {
     List<Comment> commentList;
     AdapterComments adapterComments;
 
+    NestedScrollView mainLayout;
+    RelativeLayout commentsLayout;
+
     boolean mProcessComment = false;
     boolean mProcessLike = false;
 
@@ -90,6 +104,48 @@ public class PostDetailActivity extends AppCompatActivity {
     private ClipboardManager myClipboard;
     private ClipData myClip;
 
+    private void sendNotification(String title, String message, String postId, String token) {
+        try {
+            RequestQueue queue = Volley.newRequestQueue(PostDetailActivity.this);
+
+            String url = "https://fcm.googleapis.com/fcm/send";
+
+            JSONObject data = new JSONObject();
+            data.put("title", title);
+            data.put("body", message);
+            data.put("postId", postId);
+            JSONObject notification_data = new JSONObject();
+            notification_data.put("data", data);
+            notification_data.put("to", token);
+
+            JsonObjectRequest request = new JsonObjectRequest(url, notification_data, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    String api_key_header_value = "Key=AAAAvxcNqbc:APA91bFRDNIPGgLZm5T0TCKCoaozWOiywjxvow1aPcZW2bXdaXynoNHgJsDlJ2H_b5Jx3NaG_V3LqefhToaS6jGf1uLxYEq5wWbTp3OeSffp_fBWaaYZgcDnCYp4v0jl4xO9KxGRs2QJ";
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Authorization", api_key_header_value);
+                    return headers;
+                }
+            };
+
+            queue.add(request);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +153,35 @@ public class PostDetailActivity extends AppCompatActivity {
 
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
+        
+        mainLayout = findViewById(R.id.layout_main);
+        commentsLayout = findViewById(R.id.commentsLayout);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        Intent intent = getIntent();
+        postId = intent.getStringExtra("postId");
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if(!snapshot.hasChild(postId)) {
+                    mainLayout.setVisibility(View.GONE);
+                    commentsLayout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,10 +190,6 @@ public class PostDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textToolbar = findViewById(R.id.textTollbar);
-
-
-        Intent intent = getIntent();
-        postId = intent.getStringExtra("postId");
 
         myClipboard = (ClipboardManager)PostDetailActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
 
@@ -487,6 +568,18 @@ public class PostDetailActivity extends AppCompatActivity {
                                     mProcessLike = false;
 
                                     addToHisNotifications(""+hisUid,""+postId,"Liked your post");
+                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            String token = snapshot.getValue(String.class);
+                                            sendNotification("UIT Learning", myName + " liked your post " + postId, postId, token);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -518,17 +611,16 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child(postId).exists())
                 {
-                    progressDialog = new ProgressDialog(PostDetailActivity.this);
-                    progressDialog.setMessage("Adding comment...");
-                    progressDialog.show();
-
                     String comment = commentEt.getText().toString().trim();
-
                     if (TextUtils.isEmpty(comment))
                     {
                         Toast.makeText(PostDetailActivity.this,"Commment is empty...",Toast.LENGTH_SHORT).show();
                         return;
                     }
+
+                    progressDialog = new ProgressDialog(PostDetailActivity.this);
+                    progressDialog.setMessage("Adding comment...");
+                    progressDialog.show();
 
                     String timeStamp = String.valueOf(System.currentTimeMillis());
 
@@ -552,6 +644,18 @@ public class PostDetailActivity extends AppCompatActivity {
                                     updateCommentCount();
 
                                     addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
+                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            String token = snapshot.getValue(String.class);
+                                            sendNotification("UIT Learning", myName + " commented your post " + postId, postId, token);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {

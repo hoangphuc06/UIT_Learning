@@ -2,19 +2,22 @@ package com.example.uit_learning;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,6 +47,8 @@ public class SettingsFragment extends Fragment {
 
     RecyclerView recyclerView;
 
+    Switch notificationSwitch;
+    SharedPreferences preferences;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -156,6 +161,27 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().startActivity(new Intent(getActivity(),ChangePasswordActivity.class));
                 getActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+            }
+        });
+
+        notificationSwitch = view.findViewById(R.id.notification_switch);
+        preferences = getContext().getApplicationContext().getSharedPreferences("NOTIFICATION_PREFS", Context.MODE_PRIVATE);
+        if(!preferences.contains("NOTIFICATION_ENABLE")) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("NOTIFICATION_ENABLE", true);
+        }
+        notificationSwitch.setChecked(preferences.getBoolean("NOTIFICATION_ENABLE", true));
+
+        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = preferences.edit();
+                if (isChecked) {
+                    editor.putBoolean("NOTIFICATION_ENABLE", true);
+                } else {
+                    editor.putBoolean("NOTIFICATION_ENABLE", false);
+                }
+                editor.commit();
             }
         });
 
