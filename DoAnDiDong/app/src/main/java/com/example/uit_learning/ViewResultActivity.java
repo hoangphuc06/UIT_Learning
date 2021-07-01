@@ -39,7 +39,7 @@ public class ViewResultActivity extends AppCompatActivity {
 
     BroadcastReceiver broadcastReceiver = null;
 
-    Button bt_next,bt_pre;
+    //Button bt_next,bt_pre;
     ImageButton bt_next,bt_pre;
     TextView answer;
     TextView txt_question_text,txt_timer;

@@ -1,10 +1,12 @@
 package com.example.uit_learning.adapter;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,16 +46,21 @@ public class ResultGridAdapter extends RecyclerView.Adapter<ResultGridAdapter.My
         return new MyViewHolder(itemView);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull  MyViewHolder holder, int position) {
 
-        Drawable img;
+        final Drawable right = context.getDrawable(R.drawable.background_correct_ans);
+        final Drawable wrong = context.getDrawable(R.drawable.background_wrong_ans);
+        final Drawable miss = context.getDrawable(R.drawable.background_miss_ans);
 
         holder.textQuestion.setText(new StringBuilder("Question ").append(currentQuestionList.get(position)
                 .getQuestionIndex()+1));
         if(currentQuestionList.get(position).getType()== Common.ANSWER_TYPE.RIGHT_ANSWER)
         {
-            holder.itemView.setBackgroundColor(Color.GREEN);
+            holder.itemView.setBackground(right);
+            //holder.itemView.setBackgroundColor(Color.GREEN);
             holder.iconStatus.setImageResource(R.drawable.ic_baseline_check_24);
             //img=context.getResources().getDrawable(R.drawable.ic_baseline_check_24);
             //holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
@@ -61,13 +69,15 @@ public class ResultGridAdapter extends RecyclerView.Adapter<ResultGridAdapter.My
         {
             if(currentQuestionList.get(position).getType()== Common.ANSWER_TYPE.WRONG_ANSWER)
             {
-                holder.itemView.setBackgroundColor(Color.RED);
+                holder.itemView.setBackground(wrong);
+                //holder.itemView.setBackgroundColor(Color.parseColor("#AA0000"));
 //                img=context.getResources().getDrawable(R.drawable.ic_baseline_clear_24);
 //                holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
                 holder.iconStatus.setImageResource(R.drawable.ic_baseline_clear_24);
             }
             else
             {
+                holder.itemView.setBackground(miss);
 //                img=context.getResources().getDrawable(R.drawable.ic_baseline_error_outline_24);
 //                holder.btn_question.setCompoundDrawablesWithIntrinsicBounds(null,null,null,img);
                 holder.iconStatus.setImageResource(R.drawable.ic_baseline_error_outline_24);

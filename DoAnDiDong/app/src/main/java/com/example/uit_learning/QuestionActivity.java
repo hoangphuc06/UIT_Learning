@@ -2,6 +2,7 @@ package com.example.uit_learning;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,10 +35,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.uit_learning.Common.Common;
 import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AnswerSheetAdapter;
 import com.example.uit_learning.model.CurrentQuestion;
+import com.example.uit_learning.model.Question;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -364,28 +368,60 @@ public class QuestionActivity extends AppCompatActivity {
 
         if(id==R.id.menu_finish_game)
         {
-                Dialog dialog=new Dialog(QuestionActivity.this);
-                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-                dialog.setContentView(R.layout.finish_dialog);
+//                Dialog dialog=new Dialog(QuestionActivity.this);
+//                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+//                dialog.setContentView(R.layout.finish_dialog);
+//
+//                dialog.findViewById(R.id.bt_no).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//
+//                    }
+//                });
+//                dialog.findViewById(R.id.bt_yes).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finishGame();
+//                    }
+//                });
+//                dialog.show();
 
-                dialog.findViewById(R.id.bt_no).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
+            View view = LayoutInflater.from(QuestionActivity.this).inflate(R.layout.dialog_tests,null);
 
-                    }
-                });
-                dialog.findViewById(R.id.bt_yes).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finishGame();
-                    }
-                });
-                dialog.show();
+            TextView btnOK = view.findViewById(R.id.btnOk);
+            TextView btnCancel = view.findViewById(R.id.btnCancel);
+            TextView titleTv = view.findViewById(R.id.textTitle);
+            TextView descrTv = view.findViewById(R.id.textDesCription);
+            LottieAnimationView lottieView = view.findViewById(R.id.lottieView);
+
+            titleTv.setText("OPPS");
+            descrTv.setText("You still have time to do your test, are you sure you want to submit it?");
+            lottieView.setAnimation(R.raw.done);
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(QuestionActivity.this);
+            builder.setView(view);
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            btnOK.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    finishGame();
+                }
+            });
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
 
             return true;
-
         }
 
 
@@ -422,6 +458,7 @@ public class QuestionActivity extends AppCompatActivity {
         intent.putExtra("typeUnit",typeUnit);
         intent.putExtra("id",id);
         startActivityForResult(intent,CODE_GET_RESULT);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
         Common.timer=Common.TOTAL_TIME-time_play;
         //finish();
     }
@@ -521,8 +558,42 @@ public class QuestionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+
+        View view = LayoutInflater.from(QuestionActivity.this).inflate(R.layout.dialog_tests,null);
+
+        TextView btnOK = view.findViewById(R.id.btnOk);
+        TextView btnCancel = view.findViewById(R.id.btnCancel);
+        TextView titleTv = view.findViewById(R.id.textTitle);
+        TextView descrTv = view.findViewById(R.id.textDesCription);
+        LottieAnimationView lottieView = view.findViewById(R.id.lottieView);
+
+        titleTv.setText("Warning");
+        descrTv.setText("You haven't finished the test, you really want to leave?");
+        lottieView.setAnimation(R.raw.warning);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(QuestionActivity.this);
+        builder.setView(view);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent returnIntent=new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                finish();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
 }

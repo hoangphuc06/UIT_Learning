@@ -14,4 +14,8 @@
     <color name="primary">#1976D2</color> <!-- Blue 700 -->
     <color name="secondary">#F57C00</color> <!-- Orange 700 -->
     <color name="error">#E53935</color> <!-- Red 600 -->
+
+    <color name="red">#CC0000</color>
+    <color name="green">#006600</color>
+    <color name="SandyBrown">#F4A460</color>
 </resources>

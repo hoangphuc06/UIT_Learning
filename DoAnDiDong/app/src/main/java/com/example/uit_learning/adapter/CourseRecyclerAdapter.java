@@ -1,5 +1,6 @@
 package com.example.uit_learning.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,11 +59,13 @@ public class CourseRecyclerAdapter extends RecyclerView.Adapter<CourseRecyclerAd
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Activity activity = (Activity)holder.itemView.getContext();
                 Intent intent = new Intent(holder.itemImage.getContext(), CourseDetailActivity.class);
                 intent.putExtra("title",courseList.get(position).getTitle());
                 intent.putExtra("type",courseList.get(position).getType());
                 intent.putExtra("id", courseList.get(position).getId());
-                holder.itemImage.getContext().startActivity(intent);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
             }
         });
     }

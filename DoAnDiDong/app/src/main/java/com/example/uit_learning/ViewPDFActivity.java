@@ -1,26 +1,14 @@
 package com.example.uit_learning;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.solver.state.State;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.uit_learning.Common.Constants;
@@ -29,22 +17,11 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.net.URLEncoder;
-
 public class ViewPDFActivity extends AppCompatActivity {
 
-    FloatingActionButton btn_flt;
     BroadcastReceiver broadcastReceiver = null;
 
     PDFView pdfview;
@@ -53,24 +30,19 @@ public class ViewPDFActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_pdfactivity);
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_view_pdf);
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
 
-        btn_flt=findViewById(R.id.flt_btn);
-
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         textToolbar = findViewById(R.id.textTollbar);
         textPage = findViewById(R.id.tvpage);
 
         pdfview= findViewById(R.id.pdfview);
         pdfview.zoomWithAnimation(2);
-
-
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
@@ -86,66 +58,6 @@ public class ViewPDFActivity extends AppCompatActivity {
         pd.setTitle(filename);
         pd.setMessage("Opening....!!!");
         pd.show();
-
-        btn_flt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Courses").child(typeUnit).child(idUnit).child("Documents").child(id);
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.hasChild("Question"))
-                        {
-                            View view = LayoutInflater.from(ViewPDFActivity.this).inflate(R.layout.dialog_ready_do_exercises,null);
-
-                            Button godoExercises = view.findViewById(R.id.btnGoDoExercise);
-
-                            final AlertDialog.Builder builder = new AlertDialog.Builder(ViewPDFActivity.this);
-                            builder.setView(view);
-
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                            godoExercises.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent=new Intent(ViewPDFActivity.this,ReadyActivity.class);
-                                    intent.putExtra("id",id);
-                                    intent.putExtra("idUnit",idUnit);
-                                    intent.putExtra("typeUnit",typeUnit);
-                                    startActivity(intent);
-                                    dialog.dismiss();
-                                }
-                            });
-                        }
-                        else
-                        {
-                            View view = LayoutInflater.from(ViewPDFActivity.this).inflate(R.layout.no_question_dialog,null);
-
-                            TextView bt_ok = view.findViewById(R.id.bt_ok);
-
-                            final AlertDialog.Builder builder = new AlertDialog.Builder(ViewPDFActivity.this);
-                            builder.setView(view);
-
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                            bt_ok.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        });
 
 //        pdfview.setWebViewClient(new WebViewClient()
 //        {
@@ -209,6 +121,13 @@ public class ViewPDFActivity extends AppCompatActivity {
         onBackPressed();
         return super.onSupportNavigateUp();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
