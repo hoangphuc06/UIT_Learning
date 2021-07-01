@@ -601,17 +601,16 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child(postId).exists())
                 {
-                    progressDialog = new ProgressDialog(PostDetailActivity.this);
-                    progressDialog.setMessage("Adding comment...");
-                    progressDialog.show();
-
                     String comment = commentEt.getText().toString().trim();
-
                     if (TextUtils.isEmpty(comment))
                     {
                         Toast.makeText(PostDetailActivity.this,"Commment is empty...",Toast.LENGTH_SHORT).show();
                         return;
                     }
+
+                    progressDialog = new ProgressDialog(PostDetailActivity.this);
+                    progressDialog.setMessage("Adding comment...");
+                    progressDialog.show();
 
                     String timeStamp = String.valueOf(System.currentTimeMillis());
 
@@ -635,6 +634,18 @@ public class PostDetailActivity extends AppCompatActivity {
                                     updateCommentCount();
 
                                     addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
+                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            String token = snapshot.getValue(String.class);
+                                            sendNotification("UIT Learning", myName + " commented your post " + postId, postId, token);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
