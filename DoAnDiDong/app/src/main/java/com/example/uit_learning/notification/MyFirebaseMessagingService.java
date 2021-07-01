@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -14,6 +15,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.uit_learning.PostDetailActivity;
 import com.example.uit_learning.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -37,20 +39,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Intent notification_intent = new Intent(getApplicationContext(), PostDetailActivity.class);
             notification_intent.putExtra("postId", postId);
 
-            notification_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent notifyPendingIntent = PendingIntent.getActivity(this,getNotificationId()
-                    ,notification_intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntentWithParentStack(notification_intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(getNotificationId(), PendingIntent.FLAG_UPDATE_CURRENT);
+
+//            notification_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            PendingIntent notifyPendingIntent = PendingIntent.getActivity(this,getNotificationId()
+//                    ,notification_intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
             Notification notification = new NotificationCompat.Builder(getApplicationContext(), "Learning")
                     .setContentTitle(title)
                     .setContentText(message)
                     .setSmallIcon(R.drawable.ic_notifications_24)
                     .setAutoCancel(true)
-                    .setContentIntent(notifyPendingIntent)
+                    .setContentIntent(pendingIntent)
                     .build();
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                getManager().notify(getNotificationId(), notification);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    getManager().notify(getNotificationId(), notification);
+                }
             }
         }
     }

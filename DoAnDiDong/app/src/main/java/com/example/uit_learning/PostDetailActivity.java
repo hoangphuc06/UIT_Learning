@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -82,6 +85,9 @@ public class PostDetailActivity extends AppCompatActivity {
 
     List<Comment> commentList;
     AdapterComments adapterComments;
+
+    NestedScrollView mainLayout;
+    RelativeLayout commentsLayout;
 
     boolean mProcessComment = false;
     boolean mProcessLike = false;
@@ -139,6 +145,35 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
+        mainLayout = findViewById(R.id.layout_main);
+        commentsLayout = findViewById(R.id.commentsLayout);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        Intent intent = getIntent();
+        postId = intent.getStringExtra("postId");
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if(!snapshot.hasChild(postId)) {
+                    mainLayout.setVisibility(View.GONE);
+                    commentsLayout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -146,10 +181,6 @@ public class PostDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textToolbar = findViewById(R.id.textTollbar);
-
-
-        Intent intent = getIntent();
-        postId = intent.getStringExtra("postId");
 
         myClipboard = (ClipboardManager)PostDetailActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
 

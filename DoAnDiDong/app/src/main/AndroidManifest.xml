@@ -55,7 +55,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".PostDetailActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".DashboardActivity"/>
         <activity
             android:name=".AddPostActivity"
             android:screenOrientation="portrait" />
