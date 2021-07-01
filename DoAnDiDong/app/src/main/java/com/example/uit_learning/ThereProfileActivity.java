@@ -6,12 +6,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AdapterPosts;
 import com.example.uit_learning.model.Post;
 import com.example.uit_learning.model.User;
@@ -30,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThereProfileActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
@@ -52,6 +58,9 @@ public class ThereProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_there_profile);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -168,4 +177,13 @@ public class ThereProfileActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

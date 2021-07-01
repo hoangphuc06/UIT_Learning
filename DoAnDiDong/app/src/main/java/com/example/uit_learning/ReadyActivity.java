@@ -2,18 +2,28 @@ package com.example.uit_learning;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
+
 public class ReadyActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     Button btn_DoExercises;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ready);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         Intent intent=getIntent();
         String id=intent.getStringExtra("id");
@@ -32,4 +42,13 @@ public class ReadyActivity extends AppCompatActivity {
             }
         });
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

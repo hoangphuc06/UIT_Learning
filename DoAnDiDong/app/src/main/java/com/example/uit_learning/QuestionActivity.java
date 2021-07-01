@@ -3,9 +3,12 @@ package com.example.uit_learning;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
@@ -30,6 +33,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uit_learning.Common.Common;
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AnswerSheetAdapter;
 import com.example.uit_learning.model.CurrentQuestion;
 import com.squareup.picasso.Callback;
@@ -38,6 +42,8 @@ import com.squareup.picasso.Picasso;
 import java.util.concurrent.TimeUnit;
 
 public class QuestionActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     private static final int CODE_GET_RESULT = 9999;
     Button bt_next,bt_pre,bt_finish;
@@ -65,6 +71,9 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         Intent intent=getIntent();
         id=intent.getStringExtra("id");
@@ -480,5 +489,13 @@ public class QuestionActivity extends AppCompatActivity {
         ckbD.setTypeface(null, Typeface.NORMAL);
         ckbD.setTextColor(Color.BLACK);
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

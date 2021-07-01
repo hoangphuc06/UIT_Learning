@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.uit_learning.Common.Common;
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.Common.SpaceDecoration;
 import com.example.uit_learning.adapter.ResultGridAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +37,8 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class ResultActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     TextView txt_timer,txt_result,txt_right_answer;
     Button btn_filter_total,btn_filter_right_answer,btn_filter_wrong_answer,btn_filter_no_answer;
@@ -64,6 +68,9 @@ public class ResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         Intent intent=getIntent();
         id=intent.getStringExtra("id");
@@ -238,5 +245,13 @@ public class ResultActivity extends AppCompatActivity {
 
         dialog.show();
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 }

@@ -3,6 +3,8 @@ package com.example.uit_learning;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.solver.state.State;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
@@ -21,13 +23,22 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.uit_learning.Common.Constants;
 import com.example.uit_learning.Common.NetworkChangeListener;
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URLEncoder;
 
@@ -35,27 +46,31 @@ public class ViewPDFActivity extends AppCompatActivity {
 
     FloatingActionButton btn_flt;
     BroadcastReceiver broadcastReceiver = null;
-    SwipeRefreshLayout refresh;
-    WebView pdfview;
+
+    PDFView pdfview;
+    Toolbar toolbar;
+    TextView textToolbar,textPage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pdfactivity);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
 
         btn_flt=findViewById(R.id.flt_btn);
 
-        refresh = findViewById(R.id.refresh);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        textToolbar = findViewById(R.id.textTollbar);
+        textPage = findViewById(R.id.tvpage);
 
-        pdfview=(WebView)findViewById(R.id.viewpdf);
-        pdfview.getSettings().setJavaScriptEnabled(true);
-        pdfview.setWebViewClient(new Callback());
-        pdfview.getSettings().setBuiltInZoomControls(true);
-        pdfview.getSettings().setDisplayZoomControls(false);
+        pdfview= findViewById(R.id.pdfview);
+        pdfview.zoomWithAnimation(2);
+
+
 
         String filename=getIntent().getStringExtra("filename");
         String fileurl=getIntent().getStringExtra("fileurl");
@@ -63,11 +78,14 @@ public class ViewPDFActivity extends AppCompatActivity {
         String idUnit=getIntent().getStringExtra("idUnit");
         String typeUnit=getIntent().getStringExtra("typeUnit");
 
-        actionBar.setTitle(filename);
+        textToolbar.setText(filename);
+
+        //actionBar.setTitle(filename);
 
         final ProgressDialog pd=new ProgressDialog(this);
         pd.setTitle(filename);
         pd.setMessage("Opening....!!!");
+        pd.show();
 
         btn_flt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,40 +147,62 @@ public class ViewPDFActivity extends AppCompatActivity {
             }
         });
 
-        pdfview.setWebViewClient(new WebViewClient()
-        {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                pd.show();
-            }
+//        pdfview.setWebViewClient(new WebViewClient()
+//        {
+//            @Override
+//            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+//                super.onPageStarted(view, url, favicon);
+//                pd.show();
+//            }
+//
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//                pd.dismiss();
+//            }
+//        });
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                pd.dismiss();
-            }
-        });
+//        String url="";
+//        try {
+//            url= URLEncoder.encode(fileurl,"utf-8");
+//        }catch (Exception ex)
+//        {}
+//
+//        //pdfview.loadUrl("https://vntalking.com/cac-loai-layout-trong-android.html");
+//
+////        pdfview.loadUrl("http://docs.google.com/gview?embedded=true&url=" + url);
+        StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(fileurl);
+        reference.getBytes(Constants.MAX_BYTE_PDF)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        pd.dismiss();
+                        pdfview.fromBytes(bytes).swipeHorizontal(false)
+                                .onPageChange(new OnPageChangeListener() {
+                                    @Override
+                                    public void onPageChanged(int page, int pageCount) {
+                                        int currentPage = (page + 1);
+                                        textPage.setText("Page: " + currentPage + "/"+ pageCount);
+                                    }
+                                }).load();
 
-        String url="";
-        try {
-            url= URLEncoder.encode(fileurl,"utf-8");
-        }catch (Exception ex)
-        {}
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 
-        //pdfview.loadUrl("https://vntalking.com/cac-loai-layout-trong-android.html");
-
-        pdfview.loadUrl("http://docs.google.com/gview?embedded=true&url=" + url);
-
+                    }
+                });
     }
 
 
-    private class Callback extends WebViewClient {
-        @Override
-        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-            return false;
-        }
-    }
+//    private class Callback extends WebViewClient {
+//        @Override
+//        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
+//            return false;
+//        }
+//    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -174,8 +214,8 @@ public class ViewPDFActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(broadcastReceiver);
     }
 }

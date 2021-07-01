@@ -5,10 +5,13 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class ViewImageActivity extends AppCompatActivity {
+
+    BroadcastReceiver broadcastReceiver = null;
 
     ImageView download;
     PhotoView imageView;
@@ -43,6 +49,9 @@ public class ViewImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         imageView=findViewById(R.id.Image);
         download=findViewById(R.id.download);
@@ -131,6 +140,14 @@ public class ViewImageActivity extends AppCompatActivity {
         }
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(broadcastReceiver);
+//    }
 
 }
