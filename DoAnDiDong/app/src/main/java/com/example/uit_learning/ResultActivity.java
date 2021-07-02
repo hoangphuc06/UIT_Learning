@@ -439,6 +439,7 @@ public class ResultActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
     protected void unregistorNetwork(){
         try {
             unregisterReceiver(broadcastReceiver);

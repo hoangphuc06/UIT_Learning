@@ -171,6 +171,8 @@ public class ReadyActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 onBackPressed();
             }
+        }
+    }
     protected void unregistorNetwork(){
         try {
             unregisterReceiver(broadcastReceiver);
@@ -188,8 +190,11 @@ public class ReadyActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                super.onBackPressed();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         unregistorNetwork();
