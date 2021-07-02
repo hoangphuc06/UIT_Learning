@@ -745,13 +745,7 @@ public class QuestionActivity extends AppCompatActivity {
         super.onStop();
         unregistorNetwork();
     }
-    @Override
-    protected void onDestroy() {
-        if (Common.countDownTimer != null)
-            Common.countDownTimer.cancel();
-        destroy();
-        super.onDestroy();
-    }
+
 
     private void destroy()
     {
