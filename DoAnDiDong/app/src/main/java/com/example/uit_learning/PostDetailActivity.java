@@ -568,18 +568,20 @@ public class PostDetailActivity extends AppCompatActivity {
                                     mProcessLike = false;
 
                                     addToHisNotifications(""+hisUid,""+postId,"Liked your post");
-                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            String token = snapshot.getValue(String.class);
-                                            sendNotification("UIT Learning", myName + " liked your post " + postId, postId, token);
-                                        }
+                                    if(myUid != hisUid) {
+                                        FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                String token = snapshot.getValue(String.class);
+                                                sendNotification("UIT Learning", myName + " liked your post " + postId, postId, token);
+                                            }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                        }
-                                    });
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -644,18 +646,20 @@ public class PostDetailActivity extends AppCompatActivity {
                                     updateCommentCount();
 
                                     addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
-                                    FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            String token = snapshot.getValue(String.class);
-                                            sendNotification("UIT Learning", myName + " commented your post " + postId, postId, token);
-                                        }
+                                    if(myUid != hisUid) {
+                                        FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                String token = snapshot.getValue(String.class);
+                                                sendNotification("UIT Learning", myName + " commented your post " + postId, postId, token);
+                                            }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                        }
-                                    });
+                                            }
+                                        });
+                                    }
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
