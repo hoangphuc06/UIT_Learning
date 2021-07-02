@@ -73,7 +73,7 @@ public class ReadyActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked == true)
                 {
-                    Common.TOTAL_TIME = 10*1000;
+                    Common.TOTAL_TIME = 10*60*1000;
                 }
             }
         });
