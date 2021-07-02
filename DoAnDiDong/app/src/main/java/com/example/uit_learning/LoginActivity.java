@@ -231,6 +231,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
         textEmail.setErrorEnabled(false);
         textPassword.setErrorEnabled(false);
+        CheckInternet();
 
 //        textEmail.setTranslationX(-800);
 //        textPassword.setTranslationX(-800);
@@ -250,13 +251,29 @@ public class LoginActivity extends AppCompatActivity {
 //        btnLogin.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(600).start();
 //        btnRegister.animate().translationX(0).alpha(1).setDuration(1000).setStartDelay(700).start();
     }
+
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        unregisterReceiver(broadcastReceiver);
-//    }
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregistorNetwork();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
+    }
 }

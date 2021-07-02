@@ -24,15 +24,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Không thể kết nối với server"
+        android:text="No Internet Connection"
         android:textStyle="bold"
         android:gravity="center"
-        android:textSize="18sp"
+        android:textSize="24sp"
         android:textColor="@color/main"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Kiểm tra lại kết nối internet"
+        android:text="Please check your connection"
         android:textStyle="bold"
         android:gravity="center"
         android:textSize="18sp"

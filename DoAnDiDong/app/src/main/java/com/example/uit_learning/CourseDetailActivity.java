@@ -160,18 +160,34 @@ public class CourseDetailActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        CheckInternet();
+    }
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        unregisterReceiver(broadcastReceiver);
-//    }
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
+        unregistorNetwork();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
     }
 }

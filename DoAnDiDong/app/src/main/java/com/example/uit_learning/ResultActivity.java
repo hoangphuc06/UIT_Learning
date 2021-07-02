@@ -380,6 +380,12 @@ public class ResultActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        CheckInternet();
+    }
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
@@ -433,5 +439,24 @@ public class ResultActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregistorNetwork();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
     }
 }

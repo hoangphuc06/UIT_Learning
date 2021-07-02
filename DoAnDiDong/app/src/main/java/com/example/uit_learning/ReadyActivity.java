@@ -148,6 +148,12 @@ public class ReadyActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        CheckInternet();
+    }
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
@@ -165,6 +171,12 @@ public class ReadyActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 onBackPressed();
             }
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
         }
     }
 
@@ -178,5 +190,14 @@ public class ReadyActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    protected void onDestroy() {
+        super.onDestroy();
+        unregistorNetwork();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
     }
 }
