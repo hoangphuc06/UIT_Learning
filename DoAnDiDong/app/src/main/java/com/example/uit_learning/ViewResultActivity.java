@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.example.uit_learning.Common.Common;
 import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AnswerSheetAdapter;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -97,6 +98,7 @@ public class ViewResultActivity extends AppCompatActivity {
                     TimeUnit.MILLISECONDS.toMinutes(Common.timer),
                     TimeUnit.MILLISECONDS.toSeconds(Common.timer) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(Common.timer))));
+
             layout_image=(FrameLayout)findViewById(R.id.layout_image);
             progressBar=(ProgressBar)findViewById(R.id.progress_bar);
             txt_question_text=(TextView)findViewById(R.id.txt_question_text);
@@ -138,7 +140,7 @@ public class ViewResultActivity extends AppCompatActivity {
             answer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Common.list.get(Index).getAnswer() != "nulll")
+                    if (!Common.list.get(Index).getAnswer().equals("nulll"))
                     {
                         answerImage.setVisibility(View.VISIBLE);
                         Picasso.get().load(Common.list.get(Index).getAnswer()).into(answerImage, new Callback() {
@@ -149,7 +151,8 @@ public class ViewResultActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Exception e) {
-                                Toast.makeText(ViewResultActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ViewResultActivity.this,"No answer for this question",Toast.LENGTH_SHORT).show();
+                                return;
                             }
                         });
 
@@ -158,6 +161,16 @@ public class ViewResultActivity extends AppCompatActivity {
                     {
                         Toast.makeText(ViewResultActivity.this, "No answer for this question", Toast.LENGTH_SHORT).show();
                     }
+                }
+            });
+
+            answerImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ViewResultActivity.this, ViewImageActivity.class);
+                    intent.putExtra("pImage",Common.list.get(Index).getAnswer());
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 }
             });
 
