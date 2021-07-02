@@ -117,7 +117,7 @@ public class ViewImageActivity extends AppCompatActivity {
             out.flush();
             out.close();
 
-            Toast.makeText(ViewImageActivity.this, "File Save In DCIM", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ViewImageActivity.this, "File Save In Download", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(ViewImageActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 

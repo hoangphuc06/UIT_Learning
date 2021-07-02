@@ -1,17 +1,25 @@
 package com.example.uit_learning;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,18 +72,21 @@ public class QuestionActivity extends AppCompatActivity {
     RecyclerView answer_sheet_view;
     AnswerSheetAdapter answerSheetAdapter;
 
+    boolean check_sound=false;
+    boolean MusicOn=true;
+
+    MediaPlayer sound_countDown,sound_effect;
+    Vibrator v;
+    ObjectAnimator animator;
+    RelativeLayout bg_question;
+    private ColorStateList textColorDefaultCd;
 
     String id, idUnit, typeUnit;
 
     Toolbar toolbar;
     TextView textToolbar;
 
-    @Override
-    protected void onDestroy() {
-        if (Common.countDownTimer != null)
-            Common.countDownTimer.cancel();
-        super.onDestroy();
-    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +121,8 @@ public class QuestionActivity extends AppCompatActivity {
             answerSheetAdapter = new AnswerSheetAdapter(this,Common.answerSheetList);
             answer_sheet_view.setAdapter(answerSheetAdapter);
 
+            bg_question=findViewById(R.id.bg_question);
+
             txt_timer=findViewById(R.id.txt_timer);
             layout_image=(FrameLayout)findViewById(R.id.layout_image);
             progressBar=(ProgressBar)findViewById(R.id.progress_bar);
@@ -117,6 +131,8 @@ public class QuestionActivity extends AppCompatActivity {
             ckbB=(CheckBox)findViewById(R.id.ckbB);
             ckbC=(CheckBox)findViewById(R.id.ckbC);
             ckbD=(CheckBox)findViewById(R.id.ckbD);
+
+            textColorDefaultCd=txt_timer.getTextColors();
 
             countTimer();
             SetData();
@@ -170,6 +186,9 @@ public class QuestionActivity extends AppCompatActivity {
             dialog.show();
         }
 
+        if(sound_effect==null)
+            sound_effect= MediaPlayer.create(QuestionActivity.this,R.raw.sound);
+        sound_effect.start();
     }
 
     private void countTimer() {
@@ -183,10 +202,38 @@ public class QuestionActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)-
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
                     time_play-=1000;
+                    if(!check_sound)
+                    {
+                        if(sound_effect==null)
+                            sound_effect= MediaPlayer.create(QuestionActivity.this,R.raw.sound);
+                        sound_effect.start();
+                        check_sound=!check_sound;
+                    }
+                    if(sound_effect!=null)
+                    {
+                        sound_effect.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                if(!sound_effect.isPlaying())
+                                {
+                                    sound_effect.start();
+                                }
+                            }
+                        });
+                    }
+                    if (time_play < 6000 ){
+                            Sound_CountDownt();
+
+                    }else {
+                        txt_timer.setTextColor(textColorDefaultCd);
+                    }
                 }
 
                 @Override
                 public void onFinish() {
+                    txt_timer.setText("00:00");
+                    time_play=0;
+
                     finishGame();
 
                 }
@@ -203,16 +250,69 @@ public class QuestionActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)-
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
                     time_play-=1000;
+
+                    if(!check_sound)
+                    {
+                        if(sound_effect==null)
+                            sound_effect= MediaPlayer.create(QuestionActivity.this,R.raw.sound);
+                        sound_effect.start();
+                        check_sound=!check_sound;
+                    }
+
+                    if(sound_effect!=null)
+                    {
+                        sound_effect.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                if(!sound_effect.isPlaying())
+                                {
+                                    sound_effect.start();
+                                }
+                            }
+                        });
+                    }
+
+                    if (time_play < 6000 ){
+                            Sound_CountDownt();
+                    }else {
+                        txt_timer.setTextColor(textColorDefaultCd);
+                    }
                 }
 
                 @Override
                 public void onFinish() {
+                    txt_timer.setText("00:00");
+                    time_play=0;
                     finishGame();
                 }
 
             }.start();
 
         }
+
+    }
+
+    private void Sound_CountDownt() {
+        if(sound_effect!=null)
+            sound_effect.pause();
+        txt_timer.setTextColor(Color.RED);
+        if(sound_countDown==null)
+            sound_countDown= MediaPlayer.create(QuestionActivity.this,R.raw.countdown);
+        sound_countDown.start();
+
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(500);
+        }
+        animator= ObjectAnimator.ofInt(bg_question,"backgroundColor",Color.RED,Color.WHITE);
+        animator.setDuration(500);
+        animator.setEvaluator(new ArgbEvaluator());
+        // animator.setRepeatMode(Animation.REVERSE);
+        //animator.setRepeatCount(Animation.INFINITE);
+        animator.start();
 
     }
 
@@ -366,6 +466,26 @@ public class QuestionActivity extends AppCompatActivity {
 
         int id=item.getItemId();
 
+        if(id==R.id.menu_music)
+        {
+            if(MusicOn)
+            {
+                item.setIcon(R.drawable.ic_baseline_music_note);
+                if(sound_effect!=null)
+                    sound_effect.pause();
+                MusicOn=false;
+            }
+            else
+            {
+
+                item.setIcon(R.drawable.ic_baseline_music_off_24);
+                if(sound_effect!=null)
+                    sound_effect.start();
+                MusicOn=true;
+            }
+
+        }
+
         if(id==R.id.menu_finish_game)
         {
 //                Dialog dialog=new Dialog(QuestionActivity.this);
@@ -460,7 +580,8 @@ public class QuestionActivity extends AppCompatActivity {
         startActivityForResult(intent,CODE_GET_RESULT);
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
         Common.timer=Common.TOTAL_TIME-time_play;
-        //finish();
+        destroy();
+//        finish();
     }
 
     public void clearCkb()
@@ -481,6 +602,7 @@ public class QuestionActivity extends AppCompatActivity {
                 if (action.equals("doitagain")) {
                     Index = 0;
                     time_play = Common.TOTAL_TIME;
+                    check_sound=!check_sound;
                     countTimer();
                     textToolbar.setVisibility(View.VISIBLE);
                     txt_timer.setVisibility(View.VISIBLE);
@@ -594,6 +716,35 @@ public class QuestionActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (Common.countDownTimer != null)
+            Common.countDownTimer.cancel();
+        destroy();
+        super.onDestroy();
+    }
+
+    private void destroy()
+    {
+        if(v!=null)
+        {
+            if (v.hasVibrator()){
+                v.cancel();
+            }
+        }
+        if(sound_countDown!=null)
+        {
+            sound_countDown.release();
+            sound_countDown=null;
+        }
+        if(sound_effect!=null)
+        {
+            sound_effect.release();
+            sound_effect=null;
+        }
+        bg_question.setBackgroundColor(Color.WHITE);
     }
 
 }

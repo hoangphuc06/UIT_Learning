@@ -363,7 +363,7 @@ public class ResultActivity extends AppCompatActivity {
         mins10Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Common.TOTAL_TIME = 10*60*1000;
+                Common.TOTAL_TIME = 10*1000;
             }
         });
         mins15Btn.setOnClickListener(new View.OnClickListener() {

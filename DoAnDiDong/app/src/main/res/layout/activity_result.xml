@@ -45,7 +45,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.4"
+        android:layout_weight="0.5"
         android:orientation="vertical">
 
         <TextView
@@ -164,7 +164,7 @@
                 android:id="@+id/btn_filter_no_answer"
                 android:text="30"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/SandyBrown"
+                android:backgroundTint="@color/Orange"
                 android:drawableLeft="@drawable/ic_baseline_error_outline_24"
                 android:layout_width="0dp"
                 android:layout_weight="1"
