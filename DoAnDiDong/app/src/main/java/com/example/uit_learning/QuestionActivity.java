@@ -66,6 +66,7 @@ public class QuestionActivity extends AppCompatActivity {
         if (Common.countDownTimer != null)
             Common.countDownTimer.cancel();
         super.onDestroy();
+        unregistorNetwork();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -489,13 +490,29 @@ public class QuestionActivity extends AppCompatActivity {
         ckbD.setTypeface(null, Typeface.NORMAL);
         ckbD.setTextColor(Color.BLACK);
     }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        CheckInternet();
+    }
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        unregisterReceiver(broadcastReceiver);
-//    }
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
+    }
 }

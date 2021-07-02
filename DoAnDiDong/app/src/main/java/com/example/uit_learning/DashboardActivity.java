@@ -126,15 +126,30 @@ public class DashboardActivity extends AppCompatActivity {
     public void onResume() {
 
         super.onResume();
+        CheckInternet();
     }
     private void CheckInternet() {
         registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
+        unregistorNetwork();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
+    }
 }
