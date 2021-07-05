@@ -959,8 +959,8 @@ public class AddPostActivity extends AppCompatActivity {
 
             if (requestCode == IMAGGE_PICK_GALLERY_CODE)
             {
-                pDeleteImageBtn.setVisibility(View.VISIBLE);
-                imageIv.setVisibility(View.VISIBLE);
+                //pDeleteImageBtn.setVisibility(View.VISIBLE);
+                //imageIv.setVisibility(View.VISIBLE);
                 CropImage.activity(data.getData())
                         .start(this);
             }
@@ -971,7 +971,12 @@ public class AddPostActivity extends AppCompatActivity {
 
                 image_uri = result.getUri();
 
-                imageIv.setImageURI(image_uri);
+                if (image_uri!=null)
+                {
+                    imageIv.setImageURI(image_uri);
+                    imageIv.setVisibility(View.VISIBLE);
+                    pDeleteImageBtn.setVisibility(View.VISIBLE);
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

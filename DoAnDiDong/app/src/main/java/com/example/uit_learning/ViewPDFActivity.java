@@ -94,7 +94,7 @@ public class ViewPDFActivity extends AppCompatActivity {
                                     @Override
                                     public void onPageChanged(int page, int pageCount) {
                                         int currentPage = (page + 1);
-                                        textPage.setText("Page: " + currentPage + "/"+ pageCount);
+                                        textPage.setText(currentPage + "/"+ pageCount);
                                     }
                                 }).load();
 

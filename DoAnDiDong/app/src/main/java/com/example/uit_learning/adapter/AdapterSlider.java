@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.uit_learning.R;
 import com.example.uit_learning.model.Slider;
@@ -40,6 +41,8 @@ public class AdapterSlider extends SliderViewAdapter<AdapterSlider.MyHolder> {
 
         viewHolder.setImage(sliders.get(position));
 
+        viewHolder.textView.setText(sliders.get(position).getTitle());
+
         String des = sliders.get(position).getDescription();
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -66,10 +69,12 @@ public class AdapterSlider extends SliderViewAdapter<AdapterSlider.MyHolder> {
     public class MyHolder extends SliderViewAdapter.ViewHolder {
 
         ImageView imageView;
+        TextView textView;
 
         public MyHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_view);
+            textView = itemView.findViewById(R.id.titleSliderTv);
         }
 
         void setImage(Slider slider)

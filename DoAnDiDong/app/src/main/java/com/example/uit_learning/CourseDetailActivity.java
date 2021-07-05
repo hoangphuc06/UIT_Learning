@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +13,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -47,6 +50,10 @@ public class CourseDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView textToolbar;
 
+    CardView cardViewResult;
+
+    LinearLayout linearLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +83,8 @@ public class CourseDetailActivity extends AppCompatActivity {
 
         totalUnitTv = findViewById(R.id.totalUnitTv);
         completedUnitTv = findViewById(R.id.completedUnitTv);
+        cardViewResult = findViewById(R.id.cardResult);
+        linearLayout = findViewById(R.id.layoutNoDoc);
 
         recview = findViewById(R.id.recview);
         recview.setLayoutManager(new LinearLayoutManager(this));
@@ -113,6 +122,16 @@ public class CourseDetailActivity extends AppCompatActivity {
                 }
                 progressBar.setMax(count);
                 totalUnitTv.setText("Total number of lessons: " + count);
+
+                if (unitList.size() == 0)
+                {
+                    cardViewResult.setVisibility(View.GONE);
+                    recview.setVisibility(View.GONE);
+                }
+                else
+                {
+                    linearLayout.setVisibility(View.GONE);
+                }
             }
 
             @Override

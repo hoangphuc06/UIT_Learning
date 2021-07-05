@@ -33,116 +33,125 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <LinearLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-        <RelativeLayout
-            android:id="@+id/rlt"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
+        android:layout_above="@+id/layoutBot">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
-                android:id="@+id/grid_answer"/>
-
-            <TextView
-                android:id="@+id/txt_timer"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="16dp"
-                android:text="20:00"
-                android:layout_centerVertical="true"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="match_parent"
-                android:layout_toStartOf="@+id/txt_timer"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_time_black"/>
-
-        </RelativeLayout>
         <LinearLayout
-            android:layout_margin="16dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <FrameLayout
-                android:id="@+id/layout_image"
+            <RelativeLayout
+                android:id="@+id/rlt"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
-                <ImageView
-                    android:id="@+id/img_question"
-                    android:scaleType="centerCrop"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"></ImageView>
+                android:layout_height="60dp">
 
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_gravity="center"
+                <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    ></ProgressBar>
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:id="@+id/grid_answer"/>
 
-            </FrameLayout>
-            <TextView
-                android:id="@+id/txt_question_text"
-                android:text="What do you chose ?"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginTop="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></TextView>
+                <TextView
+                    android:id="@+id/txt_timer"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="16dp"
+                    android:text="20:00"
+                    android:layout_centerVertical="true"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-            <CheckBox
-                android:layout_marginTop="5dp"
-                android:id="@+id/ckbA"
-                android:text="Answer A"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></CheckBox>
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"
+                    android:layout_toStartOf="@+id/txt_timer"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_time_black"/>
 
-            <CheckBox
-                android:layout_marginTop="5dp"
-                android:id="@+id/ckbB"
-                android:text="Answer B"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></CheckBox>
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_margin="16dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <CheckBox
-                android:layout_marginTop="5dp"
-                android:id="@+id/ckbC"
-                android:text="Answer C"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></CheckBox>
+                <FrameLayout
+                    android:id="@+id/layout_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+                    <ImageView
+                        android:id="@+id/img_question"
+                        android:scaleType="centerCrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></ImageView>
 
-            <CheckBox
-                android:layout_marginTop="5dp"
-                android:id="@+id/ckbD"
-                android:text="Answer D"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></CheckBox>
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        ></ProgressBar>
+
+                </FrameLayout>
+                <TextView
+                    android:id="@+id/txt_question_text"
+                    android:text="What do you chose ?"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"></TextView>
+
+                <CheckBox
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/ckbA"
+                    android:text="Answer A"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"></CheckBox>
+
+                <CheckBox
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/ckbB"
+                    android:text="Answer B"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"></CheckBox>
+
+                <CheckBox
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/ckbC"
+                    android:text="Answer C"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"></CheckBox>
+
+                <CheckBox
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/ckbD"
+                    android:text="Answer D"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"></CheckBox>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
+
     <RelativeLayout
+        android:id="@+id/layoutBot"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="16dp"
@@ -155,7 +164,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="32dp"
             android:src="@drawable/ic_pre_question_white"
             android:background="@drawable/bacground_next_pre_question"/>
 
@@ -164,7 +173,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="32dp"
             android:src="@drawable/ic_next_question_white"
             android:background="@drawable/bacground_next_pre_question"/>
 

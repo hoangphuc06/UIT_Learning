@@ -103,8 +103,8 @@ public class QuestionActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textToolbar = findViewById(R.id.textTollbar);
 
@@ -556,6 +556,7 @@ public class QuestionActivity extends AppCompatActivity {
 
     private void finishGame() {
 
+        sound_effect.pause();
 
         Common.right_answer_cout=Common.wrong_answer_cout=Common.no_answer_cout=0;
         for (int i=0;i<Common.list.size();i++)
@@ -684,11 +685,11 @@ public class QuestionActivity extends AppCompatActivity {
 //        super.onPause();
 //        unregisterReceiver(broadcastReceiver);
 //    }
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
-    }
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        onBackPressed();
+//        return super.onSupportNavigateUp();
+//    }
 
     @Override
     public void onBackPressed() {
@@ -714,6 +715,7 @@ public class QuestionActivity extends AppCompatActivity {
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sound_effect.pause();
                 dialog.dismiss();
                 Intent returnIntent=new Intent();
                 setResult(Activity.RESULT_OK,returnIntent);

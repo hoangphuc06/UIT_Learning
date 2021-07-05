@@ -1,5 +1,6 @@
 package com.example.uit_learning;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.uit_learning.adapter.AdapterSlider;
 import com.example.uit_learning.adapter.CourseRecyclerAdapter;
@@ -39,6 +41,9 @@ public class HomeFragment extends Fragment {
 
     private List<Course> courses_foundation;
     private DatabaseReference reference_foundation;
+
+    //Textview
+    TextView outlineTv, foundationTv;
 
     // RecyclerView manager
     RecyclerView  recyclerView_101;
@@ -73,6 +78,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        outlineTv = view.findViewById(R.id.outlineTv);
+        foundationTv = view.findViewById(R.id.foundationTv);
+
         // Inflate the layout for this fragment
         // 101
         recyclerView_101 = view.findViewById(R.id.recycler_outline_courses);
@@ -122,6 +131,28 @@ public class HomeFragment extends Fragment {
         sliderView.setIndicatorUnselectedColor(Color.GRAY);
         sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
         sliderView.startAutoCycle();
+
+        outlineTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),CoursesActivity.class);
+                intent.putExtra("type","Outline");
+                intent.putExtra("title","Đại cương");
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+            }
+        });
+
+        foundationTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),CoursesActivity.class);
+                intent.putExtra("type","Foundation");
+                intent.putExtra("title","Cơ sở ngành");
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+            }
+        });
 
         return view;
     }

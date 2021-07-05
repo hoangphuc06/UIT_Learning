@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -168,6 +169,10 @@ public class AdapterUnits extends RecyclerView.Adapter<AdapterUnits.myviewholder
                                     intent.putExtra("typeUnit",typeUnit);
                                     activity.startActivity(intent);
                                     activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                                }
+                                else
+                                {
+                                    Toast.makeText(context,"No question for this lesson.",Toast.LENGTH_SHORT).show();
                                 }
                             }
 
