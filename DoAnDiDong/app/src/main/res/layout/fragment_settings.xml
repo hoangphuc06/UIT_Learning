@@ -133,35 +133,6 @@
                 android:layout_height="1dp"
                 android:background="#F5F0F0"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_warning_black"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Report a problem"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_gravity="center"/>
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_next_black"
-                    android:layout_gravity="center"/>
-
-            </LinearLayout>
-
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"

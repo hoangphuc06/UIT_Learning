@@ -281,6 +281,9 @@ public class ViewResultActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.quiz_menu,menu);
+
+        MenuItem sound = menu.findItem(R.id.menu_music);
+        sound.setVisible(false);
         return true;
     }
 

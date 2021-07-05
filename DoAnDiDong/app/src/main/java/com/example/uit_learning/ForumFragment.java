@@ -110,7 +110,9 @@ public class ForumFragment extends Fragment {
                 {
                     Post post = ds.getValue(Post.class);
 
-                    if (post.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) || post.getpDescr().toLowerCase().contains(searchQuery.toLowerCase()))
+                    if (post.getpTitle().toLowerCase().contains(searchQuery.toLowerCase())
+                            || post.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())
+                            || post.getpId().toLowerCase().contains(searchQuery.toLowerCase()))
                     {
                         postList.add(post);
                     }

@@ -35,7 +35,7 @@
 
    <ScrollView
        android:layout_width="match_parent"
-       android:layout_height="match_parent">
+       android:layout_height="wrap_content">
 
        <LinearLayout
            android:layout_width="match_parent"
@@ -43,6 +43,7 @@
            android:orientation="vertical">
 
            <androidx.cardview.widget.CardView
+               android:id="@+id/cardResult"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:background="@color/white"
@@ -86,12 +87,62 @@
 
            <androidx.recyclerview.widget.RecyclerView
                android:layout_width="match_parent"
-               android:layout_height="match_parent"
+               android:layout_height="wrap_content"
                tools:listitem="@layout/row_unit"
                android:id="@+id/recview"/>
 
        </LinearLayout>
 
    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/layoutNoDoc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"
+            app:lottie_rawRes="@raw/teamwork"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:layout_margin="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp">
+
+            <TextView
+                android:id="@+id/textTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No document!"
+                android:textStyle="bold"
+                android:textSize="28sp"
+                android:layout_margin="8dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/textDes1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Our team is trying to bring you the lesson as soon as possible, please come back next time."
+                android:textSize="16sp"
+                android:textColor="@color/sub"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

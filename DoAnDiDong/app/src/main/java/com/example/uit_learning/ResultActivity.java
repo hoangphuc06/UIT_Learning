@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -52,7 +53,8 @@ public class ResultActivity extends AppCompatActivity {
     ResultGridAdapter adapter,filtered_adapter;
 
     Toolbar toolbar;
-    TextView textToolbar;
+    //TextView textToolbar
+    ImageView goHomeImv;
 
     BroadcastReceiver backToQuestion=new BroadcastReceiver() {
         @Override
@@ -78,11 +80,12 @@ public class ResultActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        textToolbar = findViewById(R.id.textTollbar);
-        textToolbar.setText("Result");
+        //textToolbar = findViewById(R.id.textTollbar);
+        //textToolbar.setText("Result");
+        goHomeImv = findViewById(R.id.goHomeImv);
 
         broadcastReceiver = new NetworkChangeListener();
         CheckInternet();
@@ -116,6 +119,13 @@ public class ResultActivity extends AppCompatActivity {
         adapter = new ResultGridAdapter(this, Common.answerSheetList);
         recycler_result.addItemDecoration(new SpaceDecoration(4));
         recycler_result.setAdapter(adapter);
+
+        goHomeImv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         txt_timer.setText(String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(Common.timer),
@@ -435,11 +445,11 @@ public class ResultActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
-    }
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        onBackPressed();
+//        return super.onSupportNavigateUp();
+//    }
     protected void unregistorNetwork(){
         try {
             unregisterReceiver(broadcastReceiver);
