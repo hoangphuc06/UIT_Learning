@@ -40,14 +40,7 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(new Intent(DashboardActivity.this,LoginActivity.class));
             finish();
         }
-//        if (id == R.id.action_add_post)
-//        {
-//            startActivity(new Intent(DashboardActivity.this,AddPostActivity.class));
-//        }
-//        if (id == R.id.action_open_notification)
-//        {
-//            startActivity(new Intent(DashboardActivity.this, NotificationsActivity.class));
-//        }
+//
         return super.onOptionsItemSelected(item);
     }
 
@@ -73,6 +66,7 @@ public class DashboardActivity extends AppCompatActivity {
         textToolbar = findViewById(R.id.textTollbar);
 
         textToolbar.setText("Home");
+
         HomeFragment fragment1 = new HomeFragment();
         FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
         ft1.replace(R.id.container,fragment1,"");

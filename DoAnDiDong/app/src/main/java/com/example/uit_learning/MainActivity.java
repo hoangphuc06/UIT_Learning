@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static int SPLASH_SCREEEN = 4000;
+    private static int SPLASH_SCREEEN = 3000;
 
     Animation topAnim, bottomAnim;
     ImageView imageView;
@@ -31,11 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Ẩn thanh actionBar
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //ActionBar actionBar = getSupportActionBar();
-        // actionBar.hide();
-        //kết thúc
+
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {

@@ -169,6 +169,7 @@ public class SettingsFragment extends Fragment {
         if(!preferences.contains("NOTIFICATION_ENABLE")) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("NOTIFICATION_ENABLE", true);
+            editor.commit();
         }
         notificationSwitch.setChecked(preferences.getBoolean("NOTIFICATION_ENABLE", true));
 

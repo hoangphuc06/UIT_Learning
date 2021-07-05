@@ -48,16 +48,17 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
     Context context;
     List<Comment> commentList;
 
-    String myUid, postId;
+    String myUid, postId, hisUid;
 
     private ClipboardManager myClipboard;
     private ClipData myClip;
 
-    public AdapterComments(Context context, List<Comment> commentList, String myUid, String postId) {
+    public AdapterComments(Context context, List<Comment> commentList, String myUid, String postId, String hisUid) {
         this.context = context;
         this.commentList = commentList;
         this.myUid = myUid;
         this.postId = postId;
+        this.hisUid = hisUid;
     }
 
     @NonNull
@@ -121,7 +122,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
                         {
                             PopupMenu popupMenu  = new PopupMenu(context,holder.moreBtn,Gravity.END);
 
-                            if (uid.equals(myUid))
+                            if (uid.equals(myUid) || hisUid.equals(myUid))
                             {
                                 popupMenu.getMenu().add(Menu.NONE,0,0,"Delete");
                             }
