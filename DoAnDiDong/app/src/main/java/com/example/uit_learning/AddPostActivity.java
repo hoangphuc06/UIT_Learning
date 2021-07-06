@@ -758,8 +758,8 @@ public class AddPostActivity extends AppCompatActivity {
                                                 titleEd.setText("");
                                                 descriptionEd.setText("");
                                                 imageIv.setImageURI(null);
-                                                imageIv.setMinimumHeight(200);
-                                                imageIv.setMinimumHeight(200);
+//                                                imageIv.setMinimumHeight(200);
+//                                                imageIv.setMinimumHeight(200);
                                                 image_uri = null;
 
                                                 View view = LayoutInflater.from(AddPostActivity.this).inflate(R.layout.dialog_success,null);
