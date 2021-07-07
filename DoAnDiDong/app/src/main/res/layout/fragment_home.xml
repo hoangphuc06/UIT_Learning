@@ -53,7 +53,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_outline_courses"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:minHeight="180dp"/>
 
             <TextView
                 android:id="@+id/foundationTv"

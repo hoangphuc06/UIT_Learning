@@ -125,7 +125,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
                 if (unitList.size() == 0)
                 {
-                    cardViewResult.setVisibility(View.GONE);
+                    //cardViewResult.setVisibility(View.GONE);
                     recview.setVisibility(View.GONE);
                 }
                 else
