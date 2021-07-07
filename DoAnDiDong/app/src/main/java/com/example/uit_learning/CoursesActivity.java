@@ -6,10 +6,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.example.uit_learning.Common.NetworkChangeListener;
 import com.example.uit_learning.adapter.AdapterSlider;
 import com.example.uit_learning.adapter.CourseRecyclerAdapter;
 import com.example.uit_learning.model.Course;
@@ -26,6 +30,7 @@ import java.util.List;
 public class CoursesActivity extends AppCompatActivity {
 
     private static final FirebaseDatabase root = FirebaseDatabase.getInstance();
+    BroadcastReceiver broadcastReceiver = null;
 
     private List<Course> courseList;
 
@@ -39,6 +44,9 @@ public class CoursesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_courses);
+
+        broadcastReceiver = new NetworkChangeListener();
+        CheckInternet();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,5 +102,35 @@ public class CoursesActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        CheckInternet();
+    }
+    private void CheckInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    protected void unregistorNetwork(){
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregistorNetwork();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregistorNetwork();
     }
 }

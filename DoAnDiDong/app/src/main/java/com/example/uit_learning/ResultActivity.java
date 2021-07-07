@@ -171,7 +171,7 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        if (percent > 80) {
+        if (percent >= 80) {
             txt_result.setText("Congratulations,\nyou pass the test.");
             lottieAnimationView.setAnimation(R.raw.smile);
 

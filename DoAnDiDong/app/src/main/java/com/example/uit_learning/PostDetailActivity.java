@@ -570,7 +570,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                     mProcessLike = false;
 
                                     addToHisNotifications(""+hisUid,""+postId,"Liked your post");
-                                    if(myUid != hisUid) {
+                                    if(!myUid.equals(hisUid)) {
                                         FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -648,7 +648,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                     updateCommentCount();
 
                                     addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
-                                    if(myUid != hisUid) {
+                                    if(!myUid.equals(hisUid)) {
                                         FirebaseDatabase.getInstance().getReference("Tokens").child(hisUid).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {

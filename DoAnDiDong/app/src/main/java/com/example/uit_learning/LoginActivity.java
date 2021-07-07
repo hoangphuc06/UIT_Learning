@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                     else
                     {
                         progressDialog.dismiss();
-                        Toast.makeText(LoginActivity.this,"Tài khoản hoặc mật khẩu không chính xác!",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this,"Email or Password is incorrect!",Toast.LENGTH_LONG).show();
                     }
                 }
             });
